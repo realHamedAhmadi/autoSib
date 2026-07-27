@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 final class SibHttpClient
 {
-    public function request(?string $accessToken = null): PendingRequest
+    public function request(?string $adminUserIdentifier = null): PendingRequest
     {
         $baseUrl = config('sib.base_url');
         $host = parse_url($baseUrl, PHP_URL_HOST);
@@ -22,7 +22,8 @@ final class SibHttpClient
             'Connection' => 'keep-alive',
         ];
 
-        if ($accessToken !== null) {
+        $accessToken=$this->getAccessToken($adminUserIdentifier);
+        if ($adminUserIdentifier !== null) {
             $headers['Referer'] = "https://{$host}/sibnew/checkTkn?uri=%22%2F%22&tkn={$accessToken}";
             // Explicitly pass Cookie in headers to guarantee its inclusion.
             $headers['Cookie'] = "X-Access-Token={$accessToken}";
@@ -34,16 +35,22 @@ final class SibHttpClient
             ->acceptJson()
             ->asJson()
             ->withHeaders($headers)
-            ->connectTimeout(config('sib.connect_timeout'))
-            ->timeout(config('sib.timeout'))
-            ->retry(2, 500, throw: false);
-
-        if ($accessToken !== null) {
-            $request->withCookies(
+            ->withCookies(
                 ['X-Access-Token' => $accessToken],
                 $host,
-            );
-        }
+            )
+            ->connectTimeout(config('sib.connect_timeout'))
+            /*->beforeSending(function ($request, $options) use ($adminUserIdentifier) {
+                Log::info('SIB outgoing request', [
+                    'adminUserIdentifier' => $adminUserIdentifier,
+                    'method' => $request->method(),
+                    'url' => $request->url(),
+                    'headers' => $request->headers(),
+                    'data' => $request->data(),
+                ]);
+            })*/
+            ->timeout(config('sib.timeout'))
+            ->retry(2, 500, throw: false);
 
         return $request;
     }
@@ -53,7 +60,6 @@ final class SibHttpClient
         $payload = $this->payload($response);
 
         if (! $response->successful()) {
-            Log::info($response->status());
             throw new SibApiException(
                 message: $payload['Message']
                 ?? "SIB returned HTTP {$response->status()}.",
@@ -95,5 +101,13 @@ final class SibHttpClient
         $payload = $response->json();
 
         return is_array($payload) ? $payload : [];
+    }
+
+    private function getAccessToken($userIdentifier)
+    {
+        if (strlen($userIdentifier)>20){
+            return $userIdentifier;
+        }
+        return getCurrentUserToken($userIdentifier);
     }
 }

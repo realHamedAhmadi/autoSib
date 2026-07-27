@@ -28,11 +28,8 @@ class AuthController extends Controller
         try {
             $token=$this->sibLoginService->login($request->username,$request->password);
             $user=User::where('national_code',$request->username)->first();
-            $user->token=$token->jwt;
-            $user->token_expires_at=$token->expiresAt;
-            $user->save();
-            $user->refresh();
             Auth::login($user);
+            setCurrentUserToken($token);
             return redirect()->route('get.role');
         }catch (SibApiException $exception){
             return back()->withErrors([

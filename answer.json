@@ -1,0 +1,107 @@
+{
+    "Code": 1,
+    "Message": null,
+    "DebugMessage": null,
+    "Data": {
+        "Id_BasicVisit": null,
+        "Id_ChildIndex": 6931,
+        "Title_ChildIndex": "ارزيابي سلامت روان جوانان (18 تا 29 سال) (غير پزشک)",
+        "Id_Priority": -1,
+        "Comment": null,
+        "NextForm": null,
+        "Actions": [
+            {
+                "Id": 111247,
+                "Title": "ارجاع جهت انجام معاینات پزشک",
+                "Comment": null,
+                "NextTrackDate": null
+            },
+            {
+                "Id": 111075,
+                "Title": "اطلاع رساني و تشويق فرد براي دريافت آموزش هاي گروهي از روانشناس با استفاده از <tl filename=\"amoozesh1.pdf\" url=\"\" title=\" لينک راهنما\" tooltip=\"نمايش فايل\" />  ",
+                "Comment": null,
+                "NextTrackDate": null
+            }
+        ],
+        "Diagnoses": [
+            {
+                "Id": 31355,
+                "Title": "غربال منفی در ارزیابی سلامت روان",
+                "ResValue": null,
+                "Type": 1
+            }
+        ],
+        "Answers": [
+            {
+                "Id_Condition": 30087,
+                "Answer": 1,
+                "PostProcessAnswer": 1
+            },
+            {
+                "Id_Condition": 16247,
+                "Answer": 100059,
+                "PostProcessAnswer": 100059
+            },
+            {
+                "Id_Condition": 16248,
+                "Answer": 100065,
+                "PostProcessAnswer": 100065
+            },
+            {
+                "Id_Condition": 16249,
+                "Answer": 100070,
+                "PostProcessAnswer": 100070
+            },
+            {
+                "Id_Condition": 16250,
+                "Answer": 100076,
+                "PostProcessAnswer": 100076
+            },
+            {
+                "Id_Condition": 16251,
+                "Answer": 100083,
+                "PostProcessAnswer": 100083
+            },
+            {
+                "Id_Condition": 16252,
+                "Answer": 100089,
+                "PostProcessAnswer": 100089
+            },
+            {
+                "Id_Condition": 16275,
+                "Answer": 0,
+                "PostProcessAnswer": 0
+            },
+            {
+                "Id_Condition": 28136,
+                "Answer": 0,
+                "PostProcessAnswer": 0
+            },
+            {
+                "Id_Condition": 23132,
+                "Answer": 0,
+                "PostProcessAnswer": 0
+            },
+            {
+                "Id_Condition": 16258,
+                "Answer": 0,
+                "PostProcessAnswer": 0
+            },
+            {
+                "Id_Condition": 16259,
+                "Answer": 0,
+                "PostProcessAnswer": 0
+            },
+            {
+                "Id_Condition": 23967,
+                "Answer": 0,
+                "PostProcessAnswer": 0
+            }
+        ],
+        "LastAnswers": [],
+        "Charts": [],
+        "Hash": "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",
+        "ReferralType": 1
+    },
+    "TraceID": null
+}

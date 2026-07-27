@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Sib\User\SibUserService;
+use App\Services\Sib\User\SibAdminUserService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    function index(SibUserService $service)
+    function index(SibAdminUserService $service)
     {
-        $u=$service->getUserInfo(\Illuminate\Support\Facades\Auth::user()->token);
+        $u=$service->getUserInfo();
         print_r($u);
 
         return view('home');

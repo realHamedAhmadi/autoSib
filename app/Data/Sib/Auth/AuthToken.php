@@ -8,7 +8,7 @@ use InvalidArgumentException;
 final readonly class AuthToken
 {
     public function __construct(
-        public string $jwt,
+        public string $token,
         public CarbonImmutable $expiresAt,
         public string $type,
     ) {
@@ -16,8 +16,8 @@ final readonly class AuthToken
 
     public static function fromApiResponse(array $data): self
     {
-        $jwt = $data['JWT'] ?? null;
-        $expirationDate = $data['ExpirationDate'] ?? null;
+        $jwt = $data['JWT'] ?? $data['Data']?? null;
+        $expirationDate = $data['ExpirationDate'] ?? $data['Expiration'] ?? null;
         $type = $data['Type'] ?? null;
 
         if (
@@ -32,7 +32,7 @@ final readonly class AuthToken
         }
 
         return new self(
-            jwt: $jwt,
+            token: $jwt,
             expiresAt: CarbonImmutable::parse($expirationDate),
             type: $type,
         );

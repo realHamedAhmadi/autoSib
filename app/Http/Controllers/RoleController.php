@@ -38,11 +38,7 @@ class RoleController extends Controller
         ]);
         try {
             $token=$this->sibRoleService->setRole(Auth::user()->token,$request->role_id);
-            $user=Auth::user();
-            $user->token=$token->jwt;
-            $user->token_expires_at=$token->expiresAt;
-            $user->save();
-            $user->refresh();
+            setCurrentUserToken($token);
             return redirect()->route('dashboard');
         }catch (SibApiException $exception){
             return $exception->getMessage();

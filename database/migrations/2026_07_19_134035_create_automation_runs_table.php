@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('automation_runs', function (Blueprint $table) {
             $table->id();
-            $table->string('type')->index(); // Example: sib_user_care_batch
-            $table->string('status')->default('pending')->index(); // pending, running, done, partial_failed, failed, cancelled
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('status',20)->default(\App\Support\AutomationStatuses::RUN_PENDING)->index();
 
             $table->unsignedInteger('total_users')->default(0);
             $table->unsignedInteger('processed_users')->default(0);
@@ -18,12 +18,11 @@ return new class extends Migration {
             $table->unsignedInteger('total_cares')->default(0);
             $table->unsignedInteger('processed_cares')->default(0);
 
-            $table->json('input')->nullable();   // Original request payload
-            $table->json('result')->nullable();  // Aggregated final result
+            $table->json('input')->nullable();
+            $table->json('result')->nullable();
 
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
-
             $table->timestamps();
         });
     }

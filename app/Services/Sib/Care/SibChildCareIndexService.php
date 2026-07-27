@@ -4,6 +4,7 @@ namespace App\Services\Sib\Care;
 
 use App\Data\Sib\Care\ChildCareIndexItem;
 use App\Services\Sib\SibHttpClient;
+use Illuminate\Support\Facades\Log;
 
 final class SibChildCareIndexService
 {
@@ -15,26 +16,26 @@ final class SibChildCareIndexService
     /**
      * @return array<int, ChildCareIndexItem>
      */
-    public function listCompleted(string $accessToken): array
+    public function listCompleted(?string $adminUserIdentifier = null): array
     {
-        return $this->fetch($accessToken, 100);
+        return $this->fetch(100,$adminUserIdentifier);
     }
 
     /**
      * @return array<int, ChildCareIndexItem>
      */
-    public function listPending(string $accessToken): array
+    public function listPending(?string $adminUserIdentifier = null): array
     {
-        return $this->fetch($accessToken, 121);
+        return $this->fetch( 121,$adminUserIdentifier);
     }
 
     /**
      * @return array<int, ChildCareIndexItem>
      */
-    public function fetch(string $accessToken, int $status): array
+    public function fetch(int $status,?string $adminUserIdentifier = null): array
     {
         $response = $this->client
-            ->request($accessToken)
+            ->request($adminUserIdentifier)
             ->withHeaders([
                 'Referer' => config('sib.base_url') . '/sibnew/service/family-care-list',
             ])
@@ -50,5 +51,16 @@ final class SibChildCareIndexService
             static fn (array $item): ChildCareIndexItem => ChildCareIndexItem::fromApiResponse($item),
             array_filter($data, 'is_array'),
         );
+    }
+
+    public function getHashFrom(int $formId,?string $adminUserIdentifier = null):ChildCareIndexItem | null
+    {
+        $cares=$this->listCompleted($adminUserIdentifier);
+        foreach ($cares as $care){
+            if ($care->id==$formId){
+                return $care;
+            }
+        }
+        return null;
     }
 }

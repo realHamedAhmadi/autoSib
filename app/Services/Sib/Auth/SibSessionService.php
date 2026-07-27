@@ -19,6 +19,6 @@ final class SibSessionService
     ): AuthToken {
         $loginToken = $this->loginService->login($username, $password);
 
-        return $this->roleService->setRole($loginToken->jwt, $roleUserId);
+        return $this->roleService->setRole($loginToken->token, $roleUserId);
     }
 }

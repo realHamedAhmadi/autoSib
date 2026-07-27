@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Sib\User\SibUserService;
+use App\Services\Sib\User\SibAdminUserService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,20 +11,15 @@ use Throwable;
 
 readonly class AuthMiddleware
 {
-    public function __construct(protected SibUserService $userService)
+    public function __construct(protected SibAdminUserService $userService)
     {
     }
 
     public function handle(Request $request, Closure $next): Response
     {
-        $token = Auth::user()?->token;
-
-        if (blank($token)) {
-            return $this->unauthenticated($request);
-        }
 
         try {
-            $userInfo = $this->userService->getUserInfo($token);
+            $userInfo = $this->userService->getUserInfo();
 
             // If userInfo is successfully loaded, set it in request attributes.
             $request->attributes->set('sib_user', $userInfo);

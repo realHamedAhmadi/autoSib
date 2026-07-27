@@ -3,6 +3,7 @@
 namespace App\Services\Sib\User;
 
 use App\Data\Sib\User\SibUserSearchFilters;
+use App\Data\Sib\User\SibUserSummary;
 use App\Services\Sib\SibHttpClient;
 
 final class SibUserSearchService
@@ -15,10 +16,10 @@ final class SibUserSearchService
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function search(string $accessToken, SibUserSearchFilters $filters): array
+    public function search(?string $adminUserIdentifier, SibUserSearchFilters $filters): SibUserSummary|array
     {
         $response = $this->client
-            ->request($accessToken)
+            ->request($adminUserIdentifier)
             ->withHeaders([
                 'Referer' => config('sib.base_url') . '/sibnew/register-census/service-recipient',
             ])
@@ -26,6 +27,9 @@ final class SibUserSearchService
 
         $data = $this->client->data($response);
 
-        return is_array($data) ? $data : [];
+        return array_map(
+            static fn (array $item): SibUserSummary => SibUserSummary::fromApiResponse($item),
+            array_filter($data, 'is_array'),
+        );
     }
 }

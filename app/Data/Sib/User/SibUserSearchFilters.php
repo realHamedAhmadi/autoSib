@@ -1,37 +1,52 @@
 <?php
 
 namespace App\Data\Sib\User;
-
 final readonly class SibUserSearchFilters
 {
     public function __construct(
-        public int $currentPageNumber = 1,
-        public ?int $countPerPage = null,
         public ?string $nationalId = null,
+        public ?int    $fromAgeYears = null,
+        public ?int    $toAgeYears = null,
+        public ?array   $idSick = [],
+        public ?array   $idFamilyRelation = [],
+        public ?array   $idBlockNumber = [],
         public ?string $name = null,
         public ?string $family = null,
-        public ?string $phoneMobile = null,
-        public ?int $conditionNetwork = null,
-        public ?int $idBlockNumber = null,
-        public ?int $gender = null,
-    ) {
+        public ?string $phone = null,
+        public ?int    $gender = null,
+        public ?int    $countPerPage = null,
+        public ?int    $currentPageNumber = 1,
+        public ?int    $conditionNetwork = null,
+    )
+    {
     }
 
-    /**
-     * @return array<string, scalar>
-     */
     public function toQuery(): array
     {
         return array_filter([
             'CurrentPageNumber' => $this->currentPageNumber,
-            'CountPerPage' => $this->countPerPage,
-            'NationalID' => $this->nationalId,
+            'NationalId' => $this->nationalId,
             'Name' => $this->name,
             'Family' => $this->family,
-            'PhoneM' => $this->phoneMobile,
+            'FromAge' => $this->ageToDays($this->fromAgeYears),
+            'ToAge' =>$this->ageToDays( $this->toAgeYears),
+            'Id_Sick' => $this->idSick?array_values($this->idSick):null,
             'ConditionNetwork' => $this->conditionNetwork,
-            'Id_BlockNumber' => $this->idBlockNumber,
+            'Id_BlockNumber' => $this->idBlockNumber?array_values($this->idBlockNumber):null,
+            'Id_FamilyRelation' => $this->idFamilyRelation?array_values($this->idFamilyRelation):null,
+            'PhoneM' => $this->phone,
             'Gender' => $this->gender,
-        ], static fn ($value) => $value !== null && $value !== '');
+            'CountPerPage' => $this->countPerPage,
+        ], static fn($value) => $value !== null && $value !== '' && $value !== []);
+    }
+
+    private function ageToDays(?int $age): ?int
+    {
+        if ($age === null) {
+            return null;
+        }
+
+        return (int) round($age * 365.25);
     }
 }
+

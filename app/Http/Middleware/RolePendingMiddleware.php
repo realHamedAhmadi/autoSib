@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Sib\User\SibUserService;
+use App\Services\Sib\User\SibAdminUserService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,20 +11,14 @@ use Throwable;
 
 class RolePendingMiddleware
 {
-    public function __construct(protected readonly SibUserService $userService)
+    public function __construct(protected readonly SibAdminUserService $userService)
     {
     }
 
     public function handle(Request $request, Closure $next): Response
     {
-        $token = Auth::user()?->token;
-
-        if (blank($token)) {
-            return redirect()->route('login');
-        }
-
         try {
-            $this->userService->getUserInfo($token);
+            $this->userService->getUserInfo();
 
             // Already has an active role, send to dashboard.
             return redirect()->route('dashboard');

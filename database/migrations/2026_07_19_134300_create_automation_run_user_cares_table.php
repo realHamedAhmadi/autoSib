@@ -9,26 +9,23 @@ return new class extends Migration {
     {
         Schema::create('automation_run_user_cares', function (Blueprint $table) {
             $table->id();
-
             $table->foreignId('automation_run_user_id')
                 ->constrained('automation_run_users')
                 ->cascadeOnDelete();
-
-            $table->string('care_type')->index();
+            $table->foreignId('care_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('sort_order')->default(0);
 
-            $table->string('status')->default('pending')->index(); // pending, running, done, failed, skipped
+            $table->string('status')
+                ->default(\App\Support\AutomationStatuses::CARE_PENDING)->index();
             $table->unsignedInteger('attempts')->default(0);
-
             $table->json('payload')->nullable();
             $table->json('result')->nullable();
-
             $table->json('checkpoint')->nullable();
+
             $table->text('error_message')->nullable();
 
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
-
             $table->timestamps();
 
             $table->index(['automation_run_user_id', 'sort_order']);

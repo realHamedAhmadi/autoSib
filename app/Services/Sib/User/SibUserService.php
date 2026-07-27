@@ -2,8 +2,12 @@
 
 namespace App\Services\Sib\User;
 
+use App\Data\Sib\Auth\AuthToken;
+use App\Data\Sib\User\SibAdminUserInfo;
 use App\Data\Sib\User\SibUserInfo;
 use App\Services\Sib\SibHttpClient;
+use Illuminate\Support\Facades\Log;
+use UnexpectedValueException;
 
 final class SibUserService
 {
@@ -12,28 +16,54 @@ final class SibUserService
     ) {
     }
 
-    /**
-     * Fetch the currently authenticated user's profile information.
-     *
-     * @param string $accessToken The JWT token stored in cookie/header.
-     * @return SibUserInfo
-     */
-    public function getUserInfo(string $accessToken): SibUserInfo
+    function selectUser(string $nationalId, string $userToken,?string $adminUserIdentifier = null)
     {
-        $pendingRequest = $this->client
-            ->request($accessToken)
+        $response=$this->client
+            ->request($adminUserIdentifier)
             ->withHeaders([
                 'Referer' => config('sib.base_url') . '/sibnew/checkTkn',
+            ])
+            ->post('/api/sib/v1/User/Select',[
+                'select'=>true,
+                'userToken'=>$userToken,
+                'nationalId'=>$nationalId
             ]);
 
-        \Illuminate\Support\Facades\Log::info('Outgoing Headers Dump', [
-            'headers' => $pendingRequest->getOptions()['headers'] ?? [],
-            'cookies' => $pendingRequest->getOptions()['cookies'] ?? 'No cookies nested',
-        ]);
-        $response=$pendingRequest->get('/api/sib/v1/AdminUser/UserInfo');
+            $data = $this->client->data($response);
+        $newAccessToken = $data['Token']['Data'] ?? null;
+
+        if (! is_string($newAccessToken) || blank($newAccessToken)) {
+            throw new UnexpectedValueException(
+                'SIB SetRole response does not contain a valid JWT.'
+            );
+        }
+
+        return AuthToken::fromApiResponse($data['Token']);
+    }
+
+    function getInfoByNationalId($nationalId,?string $adminUserIdentifier = null):SibUserInfo
+    {
+        $response=$this->client
+            ->request($adminUserIdentifier)
+            ->get("/api/sib/v1/User/$nationalId/Preview");
 
         $data = $this->client->data($response);
 
-        return SibUserInfo::fromApiResponse(is_array($data) ? $data : []);
+        return SibUserInfo::fromApiResponse($data);
     }
+
+    function getInfoByToken(string $userToken,?string $adminUserIdentifier = null):SibUserInfo
+    {
+        $response=$this->client
+            ->request($adminUserIdentifier)
+            ->post('/api/sib/v1/User/GetByToken',[
+                'userToken'=>$userToken,
+            ]);
+
+            $data = $this->client->data($response);
+
+        return SibUserInfo::fromApiResponse($data);
+    }
+
+
 }

@@ -2,6 +2,8 @@
 
 namespace App\Data\Sib\Care;
 
+use Illuminate\Support\Carbon;
+
 final readonly class ChildCareIndexItem
 {
     public function __construct(
@@ -9,7 +11,7 @@ final readonly class ChildCareIndexItem
         public string $title,
         public ?int $menuIndexId,
         public ?int $basicVisitId,
-        public ?string $dateVisit,
+        public ?Carbon $dateVisit,
         public ?string $timeVisit,
         public string $hash,
         public string $action,
@@ -23,7 +25,7 @@ final readonly class ChildCareIndexItem
             title: (string) ($item['Title'] ?? ''),
             menuIndexId: isset($item['Id_MenuIndex']) ? (int) $item['Id_MenuIndex'] : null,
             basicVisitId: isset($item['Id_BasicVisit']) ? (int) $item['Id_BasicVisit'] : null,
-            dateVisit: isset($item['DateVisit']) ? (string) $item['DateVisit'] : null,
+            dateVisit: isset($item['DateVisit']) ? Carbon::parse( $item['DateVisit']) : null,
             timeVisit: isset($item['TimeVisit']) ? (string) $item['TimeVisit'] : null,
             hash: (string) ($item['Hash'] ?? ''),
             action: (string) ($item['Action'] ?? ''),

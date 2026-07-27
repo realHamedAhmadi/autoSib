@@ -22,7 +22,7 @@ final readonly class SibUserSummary
     public static function fromApiResponse(array $item): self
     {
         return new self(
-            id: (int) ($item['Id_User'] ?? 0),
+            id: (int) ($item['Id_User'] ?? ''),
             name: (string) ($item['Name'] ?? ''),
             family: (string) ($item['Family'] ?? ''),
             mobile: isset($item['PhoneM']) ? (string) $item['PhoneM'] : null,

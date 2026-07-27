@@ -17,10 +17,10 @@ final class SibRoleService
     /**
      * @return array<int, SibRoleItem>
      */
-    public function getRoles(string $accessToken): array
+    public function getRoles(?string $adminUserIdentifier=null): array
     {
         $response = $this->client
-            ->request($accessToken)
+            ->request($adminUserIdentifier)
             ->withHeaders([
                 'Referer' => $this->loginReferer(),
             ])
@@ -34,10 +34,10 @@ final class SibRoleService
         ));
     }
 
-    public function setRole(string $accessToken, int $roleUserId): AuthToken
+    public function setRole(string $adminUserIdentifier, int $roleUserId): AuthToken
     {
         $response = $this->client
-            ->request($accessToken)
+            ->request($adminUserIdentifier)
             ->withHeaders([
                 'Referer' => $this->loginReferer(),
             ])
