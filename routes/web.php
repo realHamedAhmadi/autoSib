@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\System\ProjectUpdaterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ResumeAutomationRunUserController;
 use App\Http\Controllers\ShowAutomationRunController;
@@ -27,4 +28,12 @@ Route::middleware('auth')->group(function (){
     Route::get('/automation-runs/{automationRun}', ShowAutomationRunController::class)->name('show.automation');
     Route::post('/automation-run-users/{runUser}/resume', ResumeAutomationRunUserController::class)->name('resume.automation');
 
+});
+
+Route::prefix('__system')->group(function () {
+    Route::get('/updater', [ProjectUpdaterController::class, 'index'])
+        ->name('system.updater.index');
+
+    Route::post('/update-from-github', [ProjectUpdaterController::class, 'update'])
+        ->name('system.updater.update');
 });
