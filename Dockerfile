@@ -9,14 +9,19 @@ RUN apk add --no-cache \
     libpq \
     libpng-dev \
     libxml2-dev \
+    libzip-dev \
+    freetype-dev \
+    jpeg-dev \
     zip \
     unzip \
     git \
     curl \
-    oniguruma-dev
+    oniguruma-dev \
+    $PHPIZE_DEPS
 
-# Install PHP extensions required for Laravel and PostgreSQL
-RUN docker-php-ext-install pdo pdo_pgsql bcmath mbstring xml gd
+# Configure and install PHP extensions required for Laravel and PostgreSQL
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_pgsql bcmath mbstring xml gd zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
