@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Auth;
 use App\Data\Sib\Auth\AuthToken;
 
-function getCurrentUserToken(int $userId=null):string|null
+function getCurrentUserToken(int|null $userId=null):string|null
 {
     if ($userId){
         return \App\Models\User::find($userId)?->token;
