@@ -36,16 +36,32 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         AutomationProgressService $progressService
     ): void {
         Log::info('Job Start....');
-        $lock = Cache::lock($this->getLockId($this->run->user_id), 7500);
+        $adminUserId = $this->run->user_id;
+        $lockKey = $this->getLockId($adminUserId);
+        $runningFlagKey = $this->adminUserRanId($adminUserId);
+
+        $lock = Cache::lock($lockKey, 7500);
+
+        // If the crash-flag exists, it means the previous run crashed without releasing the lock.
+        // We force release the lock to allow this new attempt to run.
+        if (Cache::has($runningFlagKey)) {
+            Log::warning('Recovering from a previous job crash. Force releasing lock.', [
+                'user_id' => $adminUserId,
+            ]);
+            $lock->forceRelease();
+        }
 
         if (! $lock->get()) {
             Log::info('User processing is locked.', [
-                'user_id' => $this->run->user_id,
-                'lock_id' => $this->getLockId($this->run->user_id),
+                'user_id' => $adminUserId,
+                'lock_id' => $lockKey,
             ]);
-            $lock->forceRelease();
             return;
         }
+
+        // Set the running flag with the same TTL as the lock (7500 seconds)
+        Cache::put($runningFlagKey, true, 7500);
+
         try {
             foreach ($this->run->users()->pluck('id') as $runUserId) {
                 $this->handleRunUser(
@@ -57,10 +73,15 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             }
         } finally {
             $lock->release();
-            Log::info($this->run->total_users);
-            Log::info($this->run->processed_users);
+            Cache::forget($runningFlagKey);
+
+            Log::info('Job finished/cleanup completed.', [
+                'total' => $this->run->total_users,
+                'processed' => $this->run->processed_users,
+            ]);
         }
     }
+
 
     function handleRunUser(
         int $runUserId,
@@ -200,5 +221,10 @@ class ProcessAutomationRunUserJob implements ShouldQueue
     protected function getLockId(int $adminUserid)
     {
         return "automation_run_lock_$adminUserid";
+    }
+
+    protected function adminUserRanId(int $adminUserid)
+    {
+        return "run_admin_user_$adminUserid";
     }
 }
