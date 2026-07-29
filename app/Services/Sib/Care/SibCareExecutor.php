@@ -7,6 +7,7 @@ use App\Data\Sib\Care\CompletedCareData;
 use App\Exceptions\CareAlreadyTakenException;
 use App\Models\Care;
 use App\Services\Sib\User\SibUserService;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
@@ -21,7 +22,11 @@ class SibCareExecutor
         protected readonly SibChildCareIndexService $childCareIndexService
     ) {}
 
-    public function execute(string $adminUserId, string $sibUserId, string $sibCareId): void
+    /**
+     * @throws BindingResolutionException
+     * @throws RuntimeException
+     */
+    public function execute(string $adminUserId, string $sibUserId, string $sibCareId, array $payload): void
     {
 
         $care = Care::findOrFail($sibCareId);
@@ -34,14 +39,16 @@ class SibCareExecutor
         $olderData = $this->getOlderData($adminUserId, $userInfo->userToken, $care);
 
         $careIndexItem = $this->childCareIndexService->getHashFrom($care->code, $adminUserId);
-
+        if (!$careIndexItem){
+            throw new RuntimeException('Not load care index.');
+        }
         if ($careService->alreadyTaken($careIndexItem->dateVisit)){
             throw new CareAlreadyTakenException();
         }
 
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash,null,null,$adminUserId);
 
-        $answers = $careService->handle($olderData);
+        $answers = $careService->handle($olderData,$userInfo,$payload);
 
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, $answers,$adminUserId);
         $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, null,$adminUserId);

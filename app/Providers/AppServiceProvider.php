@@ -2,11 +2,17 @@
 
 namespace App\Providers;
 
+use App\Support\CareServiceType;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    protected array $ignoreCaresInListPending=[
+        CareServiceType::YOUNG_BMI,
+    ];
+
+
     /**
      * Register any application services.
      */
@@ -21,5 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
+        $this->app->singleton('ignoreCaresInListPending',$this->ignoreCaresInListPending);
     }
 }

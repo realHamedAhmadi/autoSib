@@ -3,6 +3,7 @@
 namespace App\Services\Sib\Care;
 
 use App\Data\Sib\Care\ChildCareIndexItem;
+use App\Exceptions\IgnoreCareException;
 use App\Services\Sib\SibHttpClient;
 use Illuminate\Support\Facades\Log;
 
@@ -61,6 +62,14 @@ final class SibChildCareIndexService
                 return $care;
             }
         }
-        return null;
+        $cares=$this->listPending($adminUserIdentifier);
+        foreach ($cares as $care){
+            if ($care->id==$formId){
+                if (in_array($care->service,app('ignoreCaresInListPending'))){
+                    throw new IgnoreCareException();
+                }
+                return $care;
+            }
+        }
     }
 }

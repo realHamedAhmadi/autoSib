@@ -6,6 +6,7 @@ use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Contracts\Cares\CareHandlerInterface;
 use App\Data\Sib\Care\CompletedCareData;
 use Illuminate\Support\Carbon;
+use App\Data\Sib\User\SibUserInfo;
 
 class BMIService implements CareHandlerInterface,CareAlreadyTakenCheckerInterface
 {
@@ -15,7 +16,7 @@ class BMIService implements CareHandlerInterface,CareAlreadyTakenCheckerInterfac
         // TODO: Implement alreadyTaken() method.
     }
 
-    public function handle(CompletedCareData $olderCareDate): array
+    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?array $payload): array
     {
         // TODO: Implement handle() method.
     }

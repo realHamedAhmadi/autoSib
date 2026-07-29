@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Exceptions\CareAlreadyTakenException;
+use App\Exceptions\IgnoreCareException;
 use App\Models\AutomationRun;
 use App\Models\AutomationRunUser;
 use App\Models\AutomationRunUserCare;
@@ -164,6 +165,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                     adminUserId:$adminUserId,
                     sibUserId: $runUser->sib_user_id,
                     sibCareId: $care->care_id,
+                    payload:$runUser->payload
                 );
 
                 $care->update([
@@ -172,7 +174,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                     'error_message' => null,
                 ]);
             }catch (Throwable $e) {
-                if ($e instanceof CareAlreadyTakenException){
+                if ($e instanceof CareAlreadyTakenException || $e instanceof IgnoreCareException){
                     $status=AutomationStatuses::CARE_SKIPPED;
                 }else {
                     $status=AutomationStatuses::CARE_FAILED;

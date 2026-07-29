@@ -7,6 +7,7 @@ use App\Data\Sib\Care\CompletedCareData;
 use App\Contracts\Cares\CareHandlerInterface;
 use Illuminate\Support\Carbon;
 use Morilog\Jalali\Jalalian;
+use App\Data\Sib\User\SibUserInfo;
 
 class DiabeticService implements CareHandlerInterface,CareAlreadyTakenCheckerInterface
 {
@@ -20,7 +21,7 @@ class DiabeticService implements CareHandlerInterface,CareAlreadyTakenCheckerInt
         return false;
     }
 
-    public function handle(CompletedCareData $olderCareDate):array
+    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?array $payload):array
     {
         $answers=[];
         $answers[]=[

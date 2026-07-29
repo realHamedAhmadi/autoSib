@@ -7,6 +7,7 @@ use App\Contracts\Cares\CareHandlerInterface;
 use App\Data\Sib\Care\CompletedCareData;
 use Illuminate\Support\Carbon;
 use Morilog\Jalali\Jalalian;
+use App\Data\Sib\User\SibUserInfo;
 
 class PhysicalActivityService implements CareHandlerInterface,CareAlreadyTakenCheckerInterface
 {
@@ -16,7 +17,7 @@ class PhysicalActivityService implements CareHandlerInterface,CareAlreadyTakenCh
         return Jalalian::fromCarbon($latestVisitDate)->getYear()==Jalalian::now()->getYear();
     }
 
-    public function handle(CompletedCareData $olderCareDate): array
+    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?array $payload): array
     {
         $answers[]=[
             "Id_Condition"=> 34025,

@@ -12,7 +12,8 @@ final readonly class SibUserInfo
         public ?string $nationalId,
         public ?int $networkId,
         public ?int $areaId,
-        public ?string $userToken
+        public ?string $userToken,
+        public ?array $sicks=[]
     ) {
     }
 
@@ -31,7 +32,11 @@ final readonly class SibUserInfo
             nationalId: isset($data['NationalID']) ? (string) $data['NationalID'] : null,
             networkId: isset($data['Id_Network']) ? (int) $data['Id_Network'] : null,
             areaId: isset($data['Id_Area']) ? (int) $data['Id_Area'] : null,
-            userToken: $data['UserToken']['Data']??null
+            userToken: $data['UserToken']['Data']??null,
+            sicks:array_map(
+                fn (array $item) => SibEventSick::fromArray($item),
+                $data['EventSicks'] ?? []
+            )
         );
     }
 

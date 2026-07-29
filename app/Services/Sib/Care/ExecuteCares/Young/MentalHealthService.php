@@ -9,6 +9,7 @@ use App\Support\MentalScreeningType;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Morilog\Jalali\Jalalian;
+use App\Data\Sib\User\SibUserInfo;
 
 class MentalHealthService implements CareHandlerInterface, CareAlreadyTakenCheckerInterface
 {
@@ -35,7 +36,7 @@ class MentalHealthService implements CareHandlerInterface, CareAlreadyTakenCheck
         return Jalalian::fromCarbon($latestVisitDate)->getYear()==Jalalian::now()->getYear();
     }
 
-    public function handle(CompletedCareData $olderCareDate): array
+    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?array $payload): array
     {
         // Example: This could be passed via DTO or configuration
         return $this->generate(MentalScreeningType::NEGATIVE);
@@ -71,7 +72,7 @@ class MentalHealthService implements CareHandlerInterface, CareAlreadyTakenCheck
     private function pickScore(MentalScreeningType $type, int $questionId): int
     {
         $ranges = match ($type) {
-            MentalScreeningType::NEGATIVE => [0, 1, 2],
+            MentalScreeningType::NEGATIVE => [0,0,0,1,1, 2],
             MentalScreeningType::POSITIVE_ANXIETY => in_array($questionId, self::ANXIETY_QUESTIONS) ? [3, 4] : [0, 1, 2, 3, 4],
             MentalScreeningType::POSITIVE_DEPRESSION => in_array($questionId, self::DEPRESSION_QUESTIONS) ? [3, 4] : [0, 1, 2, 3, 4],
         };
