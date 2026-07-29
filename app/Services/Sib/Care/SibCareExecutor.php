@@ -4,6 +4,7 @@ namespace App\Services\Sib\Care;
 
 use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Data\Sib\Care\CompletedCareData;
+use App\Data\User\UserPayload;
 use App\Exceptions\CareAlreadyTakenException;
 use App\Models\Care;
 use App\Services\Sib\User\SibUserService;
@@ -48,7 +49,7 @@ class SibCareExecutor
 
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash,null,null,$adminUserId);
 
-        $answers = $careService->handle($olderData,$userInfo,$payload);
+        $answers = $careService->handle($olderData,$userInfo,UserPayload::fromArray($payload));
 
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, $answers,$adminUserId);
         $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, null,$adminUserId);

@@ -4,6 +4,7 @@ namespace App\Contracts\Cares;
 
 use App\Data\Sib\Care\CompletedCareData;
 use App\Data\Sib\User\SibUserInfo;
+use App\Data\User\UserPayload;
 
 interface CareHandlerInterface
 {
@@ -15,5 +16,5 @@ interface CareHandlerInterface
      * @param ?array $payload
       @return array Result of execution to be persisted
      */
-    public function handle(CompletedCareData $olderCareDate,SibUserInfo $userInfo,?array $payload): array;
+    public function handle(CompletedCareData $olderCareDate,SibUserInfo $userInfo,?UserPayload $payload): array;
 }

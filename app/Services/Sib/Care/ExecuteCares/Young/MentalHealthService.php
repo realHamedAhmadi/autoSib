@@ -5,9 +5,11 @@ namespace App\Services\Sib\Care\ExecuteCares\Young;
 use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Contracts\Cares\CareHandlerInterface;
 use App\Data\Sib\Care\CompletedCareData;
+use App\Data\User\UserPayload;
 use App\Support\MentalScreeningType;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Morilog\Jalali\Jalalian;
 use App\Data\Sib\User\SibUserInfo;
 
@@ -36,10 +38,24 @@ class MentalHealthService implements CareHandlerInterface, CareAlreadyTakenCheck
         return Jalalian::fromCarbon($latestVisitDate)->getYear()==Jalalian::now()->getYear();
     }
 
-    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?array $payload): array
+    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
+        $type=null;
+        foreach ($userInfo->sicks as $sick){
+            if (Str::contains($sick->sick,MentalScreeningType::POSITIVE_DEPRESSION->value)){
+                $type=MentalScreeningType::POSITIVE_DEPRESSION;
+                break;
+            }
+            if (Str::contains($sick->sick,MentalScreeningType::POSITIVE_ANXIETY->value)){
+                $type=MentalScreeningType::POSITIVE_ANXIETY;
+                break;
+            }
+        }
+        if (!$type){
+            $type=$payload->mental;
+        }
         // Example: This could be passed via DTO or configuration
-        return $this->generate(MentalScreeningType::NEGATIVE);
+        return $this->generate($type);
     }
 
     /**
