@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-enum MarriedStatus:int
+enum MaritalStatus:int
 {
     case UNKNOWN = 0;       // نامشخص
     case DIVORCED = 1;      // طلاق گرفته
