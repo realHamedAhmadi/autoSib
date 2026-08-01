@@ -5,6 +5,8 @@ namespace App\Services\Sib\Care\ExecuteCares\Young;
 use App\Data\Sib\Care\CompletedCareData;
 use App\Data\Sib\User\SibUserInfo;
 use App\Data\User\UserPayload;
+use App\Support\GenderStatus;
+use App\Support\MaritalStatus;
 
 class VulnerableFamilyScreeningService extends BaseYoungCareService
 {
@@ -15,28 +17,37 @@ class VulnerableFamilyScreeningService extends BaseYoungCareService
     ): array {
         $answers = [];
 
-        // 1. Process Abuse/Violence questions (weighted 70/30)
-        foreach ($this->abuseQuestions() as $questionId => $weights) {
-            $answer = $this->pickWeightedAnswer($weights);
+        if ($userInfo->gender==GenderStatus::WOMAN->value && $userInfo->maritalStatus==MaritalStatus::MARRIED->value){
+            // 1. Process Abuse/Violence questions (weighted 70/30)
+            foreach ($this->abuseQuestions() as $questionId => $weights) {
+                $answer = $this->pickWeightedAnswer($weights);
+                $answers[] = [
+                    'Id_Condition' => $questionId,
+                    'Answer' => $answer,
+                    'PostProcessAnswer' => $answer,
+                ];
+            }
+
+            // 2. Process Divorce/Separation question (binary: 0 or 1)
             $answers[] = [
-                'Id_Condition' => $questionId,
-                'Answer' => $answer,
-                'PostProcessAnswer' => $answer,
+                'Id_Condition' => 19605,
+                'Answer' => 0, // Default to 'No'
+                'PostProcessAnswer' => 0,
             ];
         }
-
-        // 2. Process Divorce/Separation question (binary: 0 or 1)
-        $answers[] = [
-            'Id_Condition' => 19605,
-            'Answer' => 0, // Default to 'No'
-            'PostProcessAnswer' => 0,
-        ];
 
         // 3. Process Vulnerable Family checkboxes (default: 115611 - None)
         $answers[] = [
             'Id_Condition' => 28476,
             'Answer' => [115611],
             'PostProcessAnswer' => [115611],
+        ];
+
+        //job
+        $answers[] = [
+            'Id_Condition' => 29597,
+            'Answer' => 1, // Default to 'yes'
+            'PostProcessAnswer' => 1,
         ];
 
         //group learning
