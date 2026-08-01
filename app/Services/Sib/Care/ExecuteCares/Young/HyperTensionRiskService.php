@@ -14,6 +14,15 @@ class HyperTensionRiskService extends BaseYoungCareService
 {
     public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
-
+        $answers=[];
+        $ids=[10001,10002,10004,12663,18141,18142,18143,19529];
+        foreach ($ids as $id){
+            $answers[]=[
+                "Id_Condition"=>$id,
+                "Answer"=>$a=$olderCareDate->getAnswer($id),
+                "PostProcessAnswer"=> $a
+            ];
+        }
+        return $answers;
     }
 }
