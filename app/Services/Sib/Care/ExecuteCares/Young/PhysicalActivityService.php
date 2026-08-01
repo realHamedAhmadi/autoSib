@@ -10,13 +10,8 @@ use Illuminate\Support\Carbon;
 use Morilog\Jalali\Jalalian;
 use App\Data\Sib\User\SibUserInfo;
 
-class PhysicalActivityService implements CareHandlerInterface,CareAlreadyTakenCheckerInterface
+class PhysicalActivityService extends BaseYoungCareService
 {
-
-    public function alreadyTaken(Carbon $latestVisitDate): bool
-    {
-        return Jalalian::fromCarbon($latestVisitDate)->getYear()==Jalalian::now()->getYear();
-    }
 
     public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {

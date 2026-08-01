@@ -28,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        $this->app->singleton('ignoreCaresInListPending',$this->ignoreCaresInListPending);
+        $this->app->singleton('ignoreCaresInListPending',function (){
+            return $this->ignoreCaresInListPending;
+        });
     }
 }

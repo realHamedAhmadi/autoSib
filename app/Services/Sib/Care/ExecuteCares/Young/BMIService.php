@@ -9,14 +9,8 @@ use App\Data\User\UserPayload;
 use Illuminate\Support\Carbon;
 use App\Data\Sib\User\SibUserInfo;
 
-class BMIService implements CareHandlerInterface,CareAlreadyTakenCheckerInterface
+class BMIService extends BaseYoungCareService
 {
-
-    public function alreadyTaken(Carbon $latestVisitDate): bool
-    {
-        // TODO: Implement alreadyTaken() method.
-    }
-
     public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
         // TODO: Implement handle() method.

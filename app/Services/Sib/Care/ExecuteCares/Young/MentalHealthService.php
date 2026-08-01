@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use Morilog\Jalali\Jalalian;
 use App\Data\Sib\User\SibUserInfo;
 
-class MentalHealthService implements CareHandlerInterface, CareAlreadyTakenCheckerInterface
+class MentalHealthService extends BaseYoungCareService
 {
     /**
      * Answer codes mapped by score (4: Always to 0: Never)
@@ -32,11 +32,6 @@ class MentalHealthService implements CareHandlerInterface, CareAlreadyTakenCheck
 
     // Conditions that always return 0 (Not applicable/No)
     private const STATIC_ZERO_CONDITIONS = [16275, 28136, 23132, 16258, 16259, 23967];
-
-    public function alreadyTaken(Carbon $latestVisitDate): bool
-    {
-        return Jalalian::fromCarbon($latestVisitDate)->getYear()==Jalalian::now()->getYear();
-    }
 
     public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
