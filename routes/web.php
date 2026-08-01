@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function (){
    Route::resource('family-env-health',\App\Http\Controllers\FamilyEnvHealthController::class);
    Route::resource('diabetic',\App\Http\Controllers\DiabeticController::class);
    Route::resource('hyper-tension',\App\Http\Controllers\HyperTensionController::class);
-   Route::resource('young',\App\Http\Controllers\HyperTensionController::class);
+   Route::resource('young',\App\Http\Controllers\YoungCaresController::class);
 
     Route::post('/automation-runs', StartAutomationRunController::class)->name('start.automation');
     Route::get('/automation-runs/{automationRun}', ShowAutomationRunController::class)->name('show.automation');

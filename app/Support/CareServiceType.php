@@ -10,6 +10,7 @@ use App\Services\Sib\Care\ExecuteCares\Young\DrugUseService;
 use App\Services\Sib\Care\ExecuteCares\Young\HyperTensionRiskService;
 use App\Services\Sib\Care\ExecuteCares\Young\MentalHealthService;
 use App\Services\Sib\Care\ExecuteCares\Young\PhysicalActivityService;
+use App\Services\Sib\Care\ExecuteCares\Young\VulnerableFamilyScreeningService;
 
 enum CareServiceType: string
 {
@@ -18,6 +19,7 @@ enum CareServiceType: string
 
     case YOUNG_PHYSICAL_ACTIVITY='young:physical_activity';
     case YOUNG_MENTAL_HEALTH='young:mental_health';
+    case YOUNG_VULNERABLE_FAMILY='young:vulnerable_family';
     case YOUNG_DRUG_USE='young:drug_use';
     case YOUNG_BMI='young:bmi';
     case YOUNG_HYPER_TENSION_RISK='young:hyper_tension_risk';
@@ -35,6 +37,7 @@ enum CareServiceType: string
             //young
             self::YOUNG_PHYSICAL_ACTIVITY=>PhysicalActivityService::class,
             self::YOUNG_MENTAL_HEALTH=>MentalHealthService::class,
+            self::YOUNG_VULNERABLE_FAMILY=>VulnerableFamilyScreeningService::class,
             self::YOUNG_DRUG_USE=>DrugUseService::class,
             self::YOUNG_BMI=>BMIService::class,
             self::YOUNG_HYPER_TENSION_RISK=>HyperTensionRiskService::class,
