@@ -6,6 +6,7 @@ use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Contracts\Cares\CareHandlerInterface;
 use App\Data\Sib\Care\CompletedCareData;
 use App\Data\User\UserPayload;
+use App\Support\MaritalStatus;
 use Illuminate\Support\Carbon;
 use App\Data\Sib\User\SibUserInfo;
 
@@ -25,7 +26,6 @@ class DrugUseService extends BaseYoungCareService
     {
         $answers=[];
         $ids=[
-            29736=>1,
             29480=>115401,
             29481=>115404,
             29482=>115407,
@@ -34,8 +34,16 @@ class DrugUseService extends BaseYoungCareService
             29485=>115416,
             29486=>115419,
             28136=>0,
-            29565=>0,
         ];
+        if($userInfo->maritalStatus==MaritalStatus::MARRIED){
+            $ids[29565]=1;
+            $ids[29568]=0;
+            $ids[29569]=0;
+            $ids[29570]=0;
+            $ids[29571]=0;
+            $ids[29576]=0;
+            $ids[29574]=0;
+        }
         foreach ($ids as $id=>$ans){
             $answers[]=[
                 "Id_Condition"=>$id,

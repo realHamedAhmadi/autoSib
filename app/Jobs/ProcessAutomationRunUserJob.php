@@ -204,7 +204,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
 
             $progressService->refreshRunUser($runUser->id);
             $progressService->refreshRun($runUser->automation_run_id);
-            sleep(20);
+            sleep(10);
         }
 
         $runUser->update([
