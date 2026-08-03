@@ -13,12 +13,17 @@ class DrugUseService extends BaseYoungCareService
 {
     public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
-        $answers=[];
         $answers[]=[
             "Id_Condition"=>29736,
             "Answer"=>1,
             "PostProcessAnswer"=> 1
         ];
+        return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        $answers=[];
         $ids=[
             29736=>1,
             29480=>115401,
@@ -30,7 +35,7 @@ class DrugUseService extends BaseYoungCareService
             29486=>115419,
             28136=>0,
             29565=>0,
-            ];
+        ];
         foreach ($ids as $id=>$ans){
             $answers[]=[
                 "Id_Condition"=>$id,
@@ -39,10 +44,5 @@ class DrugUseService extends BaseYoungCareService
             ];
         }
         return $answers;
-    }
-
-    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
-    {
-        return [];
     }
 }
