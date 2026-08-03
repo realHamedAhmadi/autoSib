@@ -50,6 +50,11 @@ class VulnerableFamilyScreeningService extends BaseYoungCareService
             'PostProcessAnswer' => 1,
         ];
 
+        return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
         //group learning
         $answers[] = [
             'Id_Condition' => 28136,
@@ -58,11 +63,6 @@ class VulnerableFamilyScreeningService extends BaseYoungCareService
         ];
 
         return $answers;
-    }
-
-    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
-    {
-        return [];
     }
 
     /**
