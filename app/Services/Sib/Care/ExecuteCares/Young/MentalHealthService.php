@@ -33,7 +33,7 @@ class MentalHealthService extends BaseYoungCareService
     // Conditions that always return 0 (Not applicable/No)
     private const STATIC_ZERO_CONDITIONS = [16275, 28136, 23132, 16258, 16259, 23967];
 
-    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
         $type=null;
         foreach ($userInfo->sicks as $sick){
@@ -53,10 +53,15 @@ class MentalHealthService extends BaseYoungCareService
         return $this->generate($type);
     }
 
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
+    }
+
     /**
      * Main generator logic
      */
-    public function generate(MentalScreeningType $type): array
+    private function generate(MentalScreeningType $type): array
     {
         do {
             $responses = collect();

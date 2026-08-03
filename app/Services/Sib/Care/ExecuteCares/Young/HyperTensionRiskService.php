@@ -12,7 +12,7 @@ use Morilog\Jalali\Jalalian;
 
 class HyperTensionRiskService extends BaseYoungCareService
 {
-    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
         $answers=[];
         $ids=[10001,10002,10004,12663,18141,18142,18143,19529];
@@ -24,5 +24,10 @@ class HyperTensionRiskService extends BaseYoungCareService
             ];
         }
         return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
     }
 }

@@ -13,7 +13,7 @@ use App\Data\Sib\User\SibUserInfo;
 class PhysicalActivityService extends BaseYoungCareService
 {
 
-    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
         $answers[]=[
             "Id_Condition"=> 34025,
@@ -39,5 +39,10 @@ class PhysicalActivityService extends BaseYoungCareService
         ];
 
         return  $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
     }
 }

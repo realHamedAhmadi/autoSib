@@ -41,7 +41,7 @@ class AutomationService
                     'status' => AutomationStatuses::USER_PENDING,
                     'total_cares' => Care::type($careType)->count(),
                     'processed_cares' => 0,
-                    'payload' => $user['payload'] ?? null,
+                    'payload' => $user,
                 ]);
 
                 foreach (Care::type($careType)->get()??[] as $index => $care) {

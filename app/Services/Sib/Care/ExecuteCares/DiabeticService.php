@@ -22,7 +22,7 @@ class DiabeticService implements CareHandlerInterface,CareAlreadyTakenCheckerInt
         return false;
     }
 
-    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload):array
+    public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload):array
     {
         $answers=[];
         $answers[]=[
@@ -120,5 +120,10 @@ class DiabeticService implements CareHandlerInterface,CareAlreadyTakenCheckerInt
             "id_Condition"=> $id
         ];
         return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
     }
 }

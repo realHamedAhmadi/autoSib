@@ -11,7 +11,7 @@ use App\Data\Sib\User\SibUserInfo;
 
 class BMIService extends BaseYoungCareService
 {
-    public function handle(
+    public function firstForm(
         CompletedCareData $olderCareDate,
         SibUserInfo $userInfo,
         ?UserPayload $payload,
@@ -43,6 +43,11 @@ class BMIService extends BaseYoungCareService
         }
 
         return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
     }
 
     /**

@@ -29,8 +29,8 @@ class SibCareExecutor
      */
     public function execute(string $adminUserId, string $sibUserId, string $sibCareId, array $payload): void
     {
-
         $care = Care::findOrFail($sibCareId);
+        Log::info($care->title);
         $careService=app()->make($care->service->getClassName());
         $userInfo = $this->sibUserService->getInfoByNationalId($sibUserId, $adminUserId);
         $token = $this->sibUserService->selectUser($sibUserId, $userInfo->userToken,$adminUserId);
@@ -40,22 +40,22 @@ class SibCareExecutor
         $olderData = $this->getOlderData($adminUserId, $userInfo->userToken, $care);
 
         $careIndexItem = $this->childCareIndexService->getHashFrom($care->code, $adminUserId);
-        if (!$careIndexItem){
-            throw new RuntimeException('Not load care index.');
-        }
-        if ($careService->alreadyTaken($careIndexItem->dateVisit)){
+
+        if ($careIndexItem?->dateVisit && $careService->alreadyTaken($careIndexItem->dateVisit)){
             throw new CareAlreadyTakenException();
         }
 
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash,null,null,$adminUserId);
-
-        $answers = $careService->handle($olderData,$userInfo,UserPayload::fromArray($payload));
-
+        $answers = $careService->firstForm($olderData,$userInfo,UserPayload::fromArray($payload));
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, $answers,$adminUserId);
+        $answers=$careService->secondForm($olderData,$userInfo,UserPayload::fromArray($payload));
+        if (!empty($answers)){
+            $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, $answers,$adminUserId);
+        }
         $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, null,$adminUserId);
     }
 
-    protected function getOlderData(string $adminUserId, string $userToken, Care $care): CompletedCareData|null
+    protected function getOlderData(string $adminUserId, string $userToken, Care $care): CompletedCareData
     {
         $info = $this->sibUserService->getInfoByToken($userToken, $adminUserId);
         $visits = $this->sibCareService->listOfCompleted($info->userToken, $adminUserId);
@@ -66,6 +66,6 @@ class SibCareExecutor
             }
         }
 
-        return null;
+        return CompletedCareData::fromApiResponse([]);
     }
 }

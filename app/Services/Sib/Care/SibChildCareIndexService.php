@@ -4,8 +4,10 @@ namespace App\Services\Sib\Care;
 
 use App\Data\Sib\Care\ChildCareIndexItem;
 use App\Exceptions\IgnoreCareException;
+use App\Models\Care;
 use App\Services\Sib\SibHttpClient;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 final class SibChildCareIndexService
 {
@@ -56,20 +58,22 @@ final class SibChildCareIndexService
 
     public function getHashFrom(int $formId,?string $adminUserIdentifier = null):ChildCareIndexItem | null
     {
-        $cares=$this->listCompleted($adminUserIdentifier);
-        foreach ($cares as $care){
-            if ($care->id==$formId){
-                return $care;
+        $careIndexes=$this->listCompleted($adminUserIdentifier);
+        foreach ($careIndexes as $index){
+            if ($index->id==$formId){
+                return $index;
             }
         }
-        $cares=$this->listPending($adminUserIdentifier);
-        foreach ($cares as $care){
-            if ($care->id==$formId){
+        $careIndexes=$this->listPending($adminUserIdentifier);
+        $care= Care::where('code', $formId)->firstOrFail();
+        foreach ($careIndexes as $index){
+            if ($index->id==$formId){
                 if (in_array($care->service,app('ignoreCaresInListPending'))){
                     throw new IgnoreCareException();
                 }
-                return $care;
+                return $index;
             }
         }
+        throw new RuntimeException('Not load care index.');
     }
 }

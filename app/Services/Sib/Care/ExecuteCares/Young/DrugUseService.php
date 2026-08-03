@@ -11,7 +11,7 @@ use App\Data\Sib\User\SibUserInfo;
 
 class DrugUseService extends BaseYoungCareService
 {
-    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
         $answers=[];
         $answers[]=[
@@ -39,5 +39,10 @@ class DrugUseService extends BaseYoungCareService
             ];
         }
         return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
     }
 }

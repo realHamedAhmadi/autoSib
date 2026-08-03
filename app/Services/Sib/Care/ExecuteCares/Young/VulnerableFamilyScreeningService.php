@@ -10,7 +10,7 @@ use App\Support\MaritalStatus;
 
 class VulnerableFamilyScreeningService extends BaseYoungCareService
 {
-    public function handle(
+    public function firstForm(
         CompletedCareData $olderCareDate,
         SibUserInfo $userInfo,
         ?UserPayload $payload,
@@ -58,6 +58,11 @@ class VulnerableFamilyScreeningService extends BaseYoungCareService
         ];
 
         return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
     }
 
     /**

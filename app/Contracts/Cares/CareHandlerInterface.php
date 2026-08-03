@@ -16,5 +16,15 @@ interface CareHandlerInterface
      * @param ?array $payload
       @return array Result of execution to be persisted
      */
-    public function handle(CompletedCareData $olderCareDate,SibUserInfo $userInfo,?UserPayload $payload): array;
+    public function firstForm(CompletedCareData $olderCareDate,SibUserInfo $userInfo,?UserPayload $payload): array;
+    /**
+     * Execute the specific care action.
+     *
+     * @param CompletedCareData $olderCareDate  SIB care user data
+     * @param SibUserInfo $userInfo
+     * @param ?array $payload
+      @return array Result of execution to be persisted
+     */
+    public function secondForm(CompletedCareData $olderCareDate,SibUserInfo $userInfo,?UserPayload $payload): array;
+
 }

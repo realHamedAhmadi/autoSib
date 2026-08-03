@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Data\Sib\User\SibUserSearchFilters;
+use App\Models\AutomationRunUserCare;
+use App\Models\Care;
 use App\Services\AutomationService;
 use App\Services\Sib\User\SibUserSearchService;
+use App\Support\AutomationStatuses;
 use App\Support\CareType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

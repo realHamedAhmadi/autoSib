@@ -8,7 +8,7 @@ use App\Data\User\UserPayload;
 
 class DentalHealthService extends BaseYoungCareService
 {
-    public function handle(
+    public function firstForm(
         CompletedCareData $olderCareDate,
         SibUserInfo $userInfo,
         ?UserPayload $payload,
@@ -24,6 +24,11 @@ class DentalHealthService extends BaseYoungCareService
         }
 
         return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
     }
 
     /**

@@ -22,7 +22,7 @@ class HyperTensionService implements CareHandlerInterface,CareAlreadyTakenChecke
         return false;
     }
 
-    public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload):array
+    public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload):array
     {
         $answers=[];
         $answers[]=[
@@ -141,6 +141,11 @@ class HyperTensionService implements CareHandlerInterface,CareAlreadyTakenChecke
         ];
 
         return $answers;
+    }
+
+    public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
+    {
+        return [];
     }
 
 }

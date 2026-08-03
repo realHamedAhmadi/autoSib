@@ -70,7 +70,6 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                     $executor,
                     $progressService
                 );
-                sleep(15);
             }
         } finally {
             $lock->release();
@@ -126,7 +125,6 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             if ($care->status === AutomationStatuses::CARE_DONE || $care->status === AutomationStatuses::CARE_SKIPPED) {
                 continue;
             }
-
             $runUser->update([
                 'current_care_id' => $care->id,
             ]);
@@ -158,7 +156,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                     })->whereHas('care',function ($q)use($care){
                         $q->where('care_id',$care->care_id);
                     })->latest()->first();
-                if ($latestCare->finished_at && $careService->alreadyTaken(Carbon::parse($latestCare->finished_at))){
+                if ($latestCare?->finished_at && $careService->alreadyTaken(Carbon::parse($latestCare?->finished_at))){
                     throw new CareAlreadyTakenException();
                 }
                 $executor->execute(
@@ -201,12 +199,12 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                 $progressService->refreshRunUser($runUser->id);
                 $progressService->refreshRun($runUser->automation_run_id);
 
-                // Stop executing further cares for this specific user
-                return;
+                continue;
             }
 
             $progressService->refreshRunUser($runUser->id);
             $progressService->refreshRun($runUser->automation_run_id);
+            sleep(20);
         }
 
         $runUser->update([

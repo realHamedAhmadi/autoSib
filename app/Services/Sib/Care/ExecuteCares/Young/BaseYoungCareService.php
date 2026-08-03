@@ -18,5 +18,6 @@ abstract class BaseYoungCareService implements CareHandlerInterface,CareAlreadyT
         return Jalalian::fromCarbon($latestVisitDate)->getYear()==Jalalian::now()->getYear();
     }
 
-    abstract public function handle(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array;
+    abstract public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array;
+    abstract public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array;
 }
