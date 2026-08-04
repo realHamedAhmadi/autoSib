@@ -44,6 +44,6 @@ class HyperTensionController extends Controller
             'users.*.token'=>'required',
         ]);
         $run=$this->automationService->run($request->users,CareType::HYPER_TENSION);
-        return redirect()->route('automation.show',['run'=>$run->id]);
+        return redirect()->route('automation.runs.show',['run'=>$run->id]);
     }
 }

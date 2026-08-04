@@ -51,6 +51,6 @@ class YoungCaresController extends Controller
             'users.*.token'=>'required',
         ]);
         $run=$this->automationService->run($request->users,CareType::YOUNG_PEOPLE);
-        return redirect()->route('automation.show',['run'=>$run->id]);
+        return redirect()->route('automation.runs.show',['run'=>$run->id]);
     }
 }
