@@ -43,13 +43,15 @@ class VulnerableFamilyScreeningService extends BaseYoungCareService
             'PostProcessAnswer' => [115611],
         ];
 
-        //job
-        $answers[] = [
-            'Id_Condition' => 29597,
-            'Answer' => 1, // Default to 'yes'
-            'PostProcessAnswer' => 1,
-        ];
-
+        if ($userInfo->maritalStatus!=MaritalStatus::SINGLE->value && $userInfo->gender==GenderStatus::MAN->value){
+            //job
+            $answers[] = [
+                'Id_Condition' => 29597,
+                'Answer' => 1, // Default to 'yes'
+                'PostProcessAnswer' => 1,
+            ];
+        }
+        print_r($answers);
         return $answers;
     }
 
