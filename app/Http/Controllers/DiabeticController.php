@@ -14,13 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class DiabeticController extends Controller
 {
+    protected $sickIds=[1000,1001];
     public function __construct(
         protected readonly AutomationService $automationService
     )
     {
     }
-
-    protected $sickIds=[1000,1001];
     function index(Request $request,SibUserSearchService $searchService)
     {
         $users=$searchService->search(
@@ -40,12 +39,6 @@ class DiabeticController extends Controller
         return view('diabetic.index',compact('users'));
     }
 
-    function create()
-    {
-        $job=DB::table('jobs')->first();
-        print_r($job);
-    }
-
     function store(Request $request,)
     {
         $request->validate([
@@ -53,6 +46,7 @@ class DiabeticController extends Controller
             'users.*.id'=>'required',
             'users.*.token'=>'required',
         ]);
-        $this->automationService->run($request->users,CareType::DIABETIC);
+        $run=$this->automationService->run($request->users,CareType::DIABETIC);
+        return redirect()->route('automation.show',['run'=>$run->id]);
     }
 }

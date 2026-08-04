@@ -43,11 +43,6 @@ class YoungCaresController extends Controller
         return view('young.index',compact('users'));
     }
 
-    function create()
-    {
-        $job=DB::table('jobs')->first();
-    }
-
     function store(Request $request,)
     {
         $request->validate([
@@ -55,6 +50,7 @@ class YoungCaresController extends Controller
             'users.*.id'=>'required',
             'users.*.token'=>'required',
         ]);
-        $this->automationService->run($request->users,CareType::YOUNG_PEOPLE);
+        $run=$this->automationService->run($request->users,CareType::YOUNG_PEOPLE);
+        return redirect()->route('automation.show',['run'=>$run->id]);
     }
 }
