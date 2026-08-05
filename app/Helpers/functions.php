@@ -10,14 +10,14 @@ function getCurrentUserToken(int|null $userId=null):string|null
     return Auth::user()?->token;
 }
 
-function setCurrentUserToken(AuthToken $authToken,$userId=null)
+function setCurrentUserToken(?AuthToken $authToken,?string $userId=null)
 {
     $user=Auth::user();
     if ($userId){
         $user=\App\Models\User::find($userId);
     }
-    $user->token=$authToken->token;
-    $user->token_expires_at=$authToken->expiresAt;
+    $user->token=$authToken?->token;
+    $user->token_expires_at=$authToken?->expiresAt;
     $user->save();
     $user->refresh();
 }

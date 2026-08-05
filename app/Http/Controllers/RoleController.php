@@ -37,7 +37,12 @@ class RoleController extends Controller
             'role_id'=>'required',
         ]);
         try {
-            $token=$this->sibRoleService->setRole(Auth::user()->token,$request->role_id);
+            $user=Auth::user();
+            $token=$this->sibRoleService->setRole($user->token,$request->role_id);
+            $user->update([
+                'role_code'=>$request->role_id,
+            ]);
+            $user->refresh();
             setCurrentUserToken($token);
             return redirect()->route('dashboard');
         }catch (SibApiException $exception){

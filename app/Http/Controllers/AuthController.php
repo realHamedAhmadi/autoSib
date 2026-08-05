@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\Sib\Auth\AuthToken;
 use App\Exceptions\SibApiException;
 use App\Models\User;
 use App\Services\Sib\Auth\SibLoginService;
@@ -27,7 +28,7 @@ class AuthController extends Controller
         ]);
         try {
             $token=$this->sibLoginService->login($request->username,$request->password);
-            $user=User::where('national_code',$request->username)->first();
+            $user=User::where('national_code',$request->username)->firstOrFail();
             Auth::login($user);
             setCurrentUserToken($token);
             return redirect()->route('get.role');
@@ -40,6 +41,10 @@ class AuthController extends Controller
 
     public function logout()
     {
+        setCurrentUserToken(null);
+        Auth::user()->update([
+            'role_code'=>null
+        ]);
         Auth::logout();
         return redirect()->route('login');
     }

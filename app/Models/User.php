@@ -51,6 +51,10 @@ class User extends Authenticatable
         ];
     }
 
+    public function hasRole():bool
+    {
+        return (bool)$this?->role_code;
+    }
 
     public function familyEnvHealth()
     {

@@ -22,8 +22,11 @@ readonly class AuthMiddleware
             $userInfo = $this->userService->getUserInfo();
 
             // If userInfo is successfully loaded, set it in request attributes.
-            $request->attributes->set('sib_user', $userInfo);
+            $request->setSibAdminUser($userInfo);
         } catch (Throwable $e) {
+            Auth::user()?->update([
+                'role_code'=>null
+            ]);
             // Check if exception indicates that the user profile/role is missing or not set.
             if ($this->isRoleNotSetException($e)) {
                 if ($request->expectsJson()) {
@@ -34,8 +37,7 @@ readonly class AuthMiddleware
                 }
                 return redirect()->route('get.role');
             }
-            echo $e->getMessage();
-            //return $this->unauthenticated($request);
+            return $this->unauthenticated($request);
         }
 
         return $next($request);
@@ -48,7 +50,6 @@ readonly class AuthMiddleware
                 'message' => 'Unauthenticated.',
             ], 401);
         }
-
         return redirect()->route('login');
     }
 

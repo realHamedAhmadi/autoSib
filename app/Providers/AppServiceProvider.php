@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Data\Sib\User\SibAdminUserInfo;
 use App\Support\CareServiceType;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,6 +36,19 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('ignoreCaresInListPending',function (){
             return $this->ignoreCaresInListPending;
+        });
+
+        Request::macro('setSibAdminUser', function (SibAdminUserInfo $info): Request {
+            $this->attributes->set('sibAdminUserInfo', $info);
+
+            return $this;
+        });
+        Request::macro('getSibAdminUser', function (): ?SibAdminUserInfo {
+            return $this->attributes->get('sibAdminUserInfo');
+        });
+
+        Gate::define('auth',function (){
+           return  Auth::check() && Auth::user()?->hasRole();
         });
     }
 }

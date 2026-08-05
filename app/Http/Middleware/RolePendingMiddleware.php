@@ -18,8 +18,11 @@ class RolePendingMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            $this->userService->getUserInfo();
+            $userInfo = $this->userService->getUserInfo();
 
+            // If userInfo is successfully loaded, set it in request attributes.
+            $request->setSibAdminUser($userInfo);
+            
             // Already has an active role, send to dashboard.
             return redirect()->route('dashboard');
         } catch (Throwable $e) {
