@@ -37,4 +37,10 @@ class AuthController extends Controller
             ])->onlyInput();
         }
     }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('login');
+    }
 }

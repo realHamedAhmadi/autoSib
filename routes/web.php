@@ -21,6 +21,7 @@ Route::middleware('role-pending')->group(function (){
     Route::post('/role',[\App\Http\Controllers\RoleController::class,'setRole'])->name('set.role');
 });
 Route::middleware('auth')->group(function (){
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [DashboardController::class,'index'])->name('dashboard');
     Route::get('/dashboard/poll', [DashboardController::class, 'poll'])->name('dashboard.poll');
     Route::resource('family-env-health',\App\Http\Controllers\FamilyEnvHealthController::class);
