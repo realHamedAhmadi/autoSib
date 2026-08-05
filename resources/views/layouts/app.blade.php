@@ -141,7 +141,7 @@
                 transform: translate3d(0, 0, 0) !important;
             }
 
-            .app-pusher {
+            .app-pusher.can-auth {
                 min-height: 100vh;
                 margin-right: 280px !important;
                 transform: none !important;
@@ -221,7 +221,7 @@
 
 <body>
 <div class="ui pushable">
-    @auth()
+    @can('auth')
     {{-- Sidebar --}}
     <aside class="ui right vertical sidebar menu app-sidebar">
         {{--<div class="menu-header">
@@ -248,12 +248,12 @@
             </button>
         </form>
     </aside>
-    @endauth
+    @endcan
 
     {{-- Pusher / Main container --}}
-    <div class="pusher app-pusher">
+    <div class="pusher app-pusher @can('auth') can-auth @endcan">
 
-        @auth()
+        @can('auth')
         {{-- App Bar --}}
         <header class="app-bar">
             <div class="app-bar-right">
@@ -289,7 +289,7 @@
                 </div>
             </div>
         </header>
-        @endauth
+        @endcan
 
         {{-- Main Page Content --}}
         <main class="app-content">
