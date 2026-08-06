@@ -12,6 +12,11 @@ use App\Data\Sib\User\SibUserInfo;
 
 class HyperTensionService implements CareHandlerInterface,CareAlreadyTakenCheckerInterface
 {
+    public function hasCare(SibUserInfo $userInfo): bool
+    {
+        return true;
+    }
+
     public function alreadyTaken(Carbon $latestVisitDate): bool
     {
         $visitDate=Jalalian::fromDateTime($latestVisitDate);

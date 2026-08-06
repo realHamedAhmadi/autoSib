@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Exceptions\CareAlreadyTakenException;
+use App\Exceptions\DoesNotHaveCareException;
 use App\Exceptions\IgnoreCareException;
 use App\Models\AutomationRun;
 use App\Models\AutomationRunUser;
@@ -79,6 +80,8 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                 'total' => $this->run->total_users,
                 'processed' => $this->run->processed_users,
             ]);
+            $this->run->finished_at=now();
+            $this->run->save();
         }
     }
 
@@ -172,7 +175,10 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                     'error_message' => null,
                 ]);
             }catch (Throwable $e) {
-                if ($e instanceof CareAlreadyTakenException || $e instanceof IgnoreCareException){
+                if ($e instanceof CareAlreadyTakenException
+                    || $e instanceof IgnoreCareException
+                    || $e instanceof DoesNotHaveCareException
+                ){
                     $status=AutomationStatuses::CARE_SKIPPED;
                 }else {
                     $status=AutomationStatuses::CARE_FAILED;
@@ -198,7 +204,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                 ]);
                 $progressService->refreshRunUser($runUser->id);
                 $progressService->refreshRun($runUser->automation_run_id);
-
+                sleep(10);
                 continue;
             }
 

@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('automation_runs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('status',20)->default(\App\Support\AutomationStatuses::RUN_PENDING)->index();
+            $table->string('status',64)->default(\App\Support\AutomationStatuses::RUN_PENDING)->index();
 
             $table->unsignedInteger('total_users')->default(0);
             $table->unsignedInteger('processed_users')->default(0);

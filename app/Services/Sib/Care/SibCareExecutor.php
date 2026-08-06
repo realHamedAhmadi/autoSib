@@ -4,8 +4,10 @@ namespace App\Services\Sib\Care;
 
 use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Data\Sib\Care\CompletedCareData;
+use App\Data\Sib\User\SibUserInfo;
 use App\Data\User\UserPayload;
 use App\Exceptions\CareAlreadyTakenException;
+use App\Exceptions\DoesNotHaveCareException;
 use App\Models\Care;
 use App\Services\Sib\User\SibUserService;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -33,11 +35,16 @@ class SibCareExecutor
         Log::info($care->title);
         $careService=app()->make($care->service->getClassName());
         $userInfo = $this->sibUserService->getInfoByNationalId($sibUserId, $adminUserId);
+
         $token = $this->sibUserService->selectUser($sibUserId, $userInfo->userToken,$adminUserId);
 
         setCurrentUserToken($token, $adminUserId);
 
-        $olderData = $this->getOlderData($adminUserId, $userInfo->userToken, $care);
+        $userInfo = $this->sibUserService->getInfoByToken($userInfo->userToken, $adminUserId);
+        if (!$careService->hasCare($userInfo)){
+            throw new DoesNotHaveCareException();
+        }
+        $olderData = $this->getOlderData($adminUserId, $userInfo, $care);
 
         $careIndexItem = $this->childCareIndexService->getHashFrom($care->code, $adminUserId);
 
@@ -55,10 +62,9 @@ class SibCareExecutor
         $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, null,$adminUserId);
     }
 
-    protected function getOlderData(string $adminUserId, string $userToken, Care $care): CompletedCareData
+    protected function getOlderData(string $adminUserId, SibUserInfo $userInfo, Care $care): CompletedCareData
     {
-        $info = $this->sibUserService->getInfoByToken($userToken, $adminUserId);
-        $visits = $this->sibCareService->listOfCompleted($info->userToken, $adminUserId);
+        $visits = $this->sibCareService->listOfCompleted($userInfo->userToken, $adminUserId);
 
         foreach ($visits as $visit) {
             if ($visit->idChildIndex == $care->code) {

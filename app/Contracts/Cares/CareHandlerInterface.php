@@ -9,6 +9,12 @@ use App\Data\User\UserPayload;
 interface CareHandlerInterface
 {
     /**
+     * @param SibUserInfo $userInfo
+     * @return bool
+     */
+    public function hasCare(SibUserInfo $userInfo):bool;
+
+    /**
      * Execute the specific care action.
      *
      * @param CompletedCareData $olderCareDate  SIB care user data

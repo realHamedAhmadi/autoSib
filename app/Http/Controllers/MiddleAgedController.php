@@ -3,20 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Data\Sib\User\SibUserSearchFilters;
-use App\Models\AutomationRunUserCare;
-use App\Models\Care;
 use App\Services\AutomationService;
 use App\Services\Sib\User\SibUserSearchService;
-use App\Support\AutomationStatuses;
 use App\Support\CareType;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class YoungCaresController extends Controller
+class MiddleAgedController extends Controller
 {
-
-    protected int $ageFrom=18;
-    protected int $ageTo=30;
+    protected int $ageFrom=30;
+    protected int $ageTo=60;
     public function __construct(
         protected readonly AutomationService $automationService
     )
@@ -40,7 +35,7 @@ class YoungCaresController extends Controller
                 gender: $request->gender
             )
         );
-        return view('young.index',compact('users'));
+        return view('middle-aged.index',compact('users'));
     }
 
     function store(Request $request,)
@@ -50,7 +45,7 @@ class YoungCaresController extends Controller
             'users.*.id'=>'required',
             'users.*.token'=>'required',
         ]);
-        $run=$this->automationService->run($request->users,CareType::YOUNG_PEOPLE);
+        $run=$this->automationService->run($request->users,CareType::MIDDLE_AGED);
         return redirect()->route('automation.runs.show',['run'=>$run->id]);
     }
 }

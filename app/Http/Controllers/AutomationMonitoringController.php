@@ -5,6 +5,7 @@ use App\Models\AutomationRun;
 use App\Models\AutomationRunUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
+use Morilog\Jalali\Jalalian;
 
 class AutomationMonitoringController extends Controller
 {
@@ -36,6 +37,12 @@ class AutomationMonitoringController extends Controller
     {
         return response()->json([
             'status' => $run->status,
+            'started_at'=>$run->started_at
+                ? Jalalian::fromCarbon($run->started_at)->format('Y/m/d H:i')
+                : 'هنوز شروع نشده',
+            'finished_at'=>$run->finished_at
+                ? Jalalian::fromCarbon($run->finished_at)->format('Y/m/d H:i')
+                : 'در حال پردازش...',
             'processed_users' => $run->processed_users,
             'total_users' => $run->total_users,
             'processed_cares' => $run->processed_cares,

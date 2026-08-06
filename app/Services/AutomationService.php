@@ -9,6 +9,7 @@ use App\Models\AutomationRunUserCare;
 use App\Models\Care;
 use App\Support\AutomationStatuses;
 use App\Support\CareType;
+use App\Support\RandomNumberPicker;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -44,11 +45,13 @@ class AutomationService
                     'payload' => $user,
                 ]);
 
-                foreach (Care::type($careType)->get() ?? [] as $index => $care) {
+                $picker=new RandomNumberPicker(Care::type($careType)->count());
+
+                foreach (Care::type($careType)->get() ?? [] as  $care) {
                     AutomationRunUserCare::create([
                         'automation_run_user_id' => $runUser->id,
                         'care_id' => $care->id,
-                        'sort_order' => $index + 1,
+                        'sort_order' => $picker->next(),
                         'status' => AutomationStatuses::CARE_PENDING,
                         'payload' => $careData['payload'] ?? null,
                     ]);

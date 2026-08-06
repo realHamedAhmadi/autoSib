@@ -220,6 +220,8 @@
 </head>
 
 <body>
+{{-- Put fixed elements outside pusher --}}
+@stack('fixed-elements')
 <div class="ui pushable">
     @can('auth')
     {{-- Sidebar --}}
@@ -249,9 +251,8 @@
         </form>
     </aside>
     @endcan
-
-    {{-- Pusher / Main container --}}
-    <div class="pusher app-pusher @can('auth') can-auth @endcan">
+        {{-- Pusher / Main container --}}
+        <div class="pusher app-pusher @can('auth') can-auth @endcan">
 
         @can('auth')
         {{-- App Bar --}}
@@ -267,7 +268,6 @@
                 </button>
 
                 <h3 class="ui header app-bar-title">
-                    @yield('title', 'سامانه')
                 </h3>
             </div>
 

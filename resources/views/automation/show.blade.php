@@ -543,7 +543,7 @@
             <div class="ui placeholder segment" id="cares-placeholder">
                 <div class="ui icon header">
                     <i class="tasks icon"></i>
-                    برای مشاهده جزئیات مراقبت‌ها، روی دکمه «مشاهده جزئیات» یک کاربر کلیک کنید.
+                    برای مشاهده جزئیات مراقبت‌ها، روی دکمه «جزئیات» یک کاربر کلیک کنید.
                 </div>
             </div>
         </div>
@@ -674,7 +674,7 @@
 
             const toast = $('<div>')
                 .addClass(`automation-toast ${type}`)
-                .text(message);
+                .text(message);started_at
 
             container.empty().append(toast);
 
@@ -835,7 +835,7 @@
                                     data-user-id="${user.id}"
                                 >
                                     <i class="eye icon"></i>
-                                    مشاهده جزئیات
+                                    جزئیات
                                 </button>
                             </div>
                         </td>

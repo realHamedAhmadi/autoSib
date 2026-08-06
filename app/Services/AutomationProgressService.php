@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\AutomationRun;
 use App\Models\AutomationRunUser;
 use App\Support\AutomationStatuses;
+use Illuminate\Support\Facades\Log;
 
 class AutomationProgressService
 {
@@ -46,21 +47,13 @@ class AutomationProgressService
             ], true));
 
             $hasFailed = $cares->contains(fn ($care) => $care->status === AutomationStatuses::CARE_FAILED);
-            $hasRunning = $cares->contains(fn ($care) => $care->status === AutomationStatuses::CARE_RUNNING);
 
             if ($allFinishedOrSkipped) {
                 $runUser->status = AutomationStatuses::USER_DONE;
-                $runUser->finished_at = $runUser->finished_at ?? now();
-                $runUser->error_message = null;
-            } elseif ($hasRunning) {
-                $runUser->status = AutomationStatuses::USER_RUNNING;
-                $runUser->finished_at = null;
             } elseif ($hasFailed) {
                 $runUser->status = AutomationStatuses::USER_PAUSED;
-                $runUser->finished_at = null;
             } else {
-                $runUser->status = AutomationStatuses::USER_PENDING;
-                $runUser->finished_at = null;
+                $runUser->status = AutomationStatuses::USER_RUNNING;
             }
         }
 
@@ -103,34 +96,26 @@ class AutomationProgressService
 
         if ($users->isEmpty()) {
             $run->status = AutomationStatuses::RUN_PENDING;
-            $run->finished_at = null;
         } else {
             // Determine status based on user collection states
             $allDone = $users->every(fn ($user) => $user->status === AutomationStatuses::USER_DONE);
             $hasRunning = $users->contains(fn ($user) => $user->status === AutomationStatuses::USER_RUNNING);
             $hasPaused = $users->contains(fn ($user) => $user->status === AutomationStatuses::USER_PAUSED);
             $hasFailed = $users->contains(fn ($user) => $user->status === AutomationStatuses::USER_FAILED);
-            $hasPending = $users->contains(fn ($user) => $user->status === AutomationStatuses::USER_PENDING);
-
+            $allPending = $users->every(fn ($user) => $user->status === AutomationStatuses::USER_PENDING);
             if ($allDone) {
                 $run->status = AutomationStatuses::RUN_DONE;
-                $run->finished_at = $run->finished_at ?? now();
             } elseif ($hasRunning) {
                 $run->status = AutomationStatuses::RUN_RUNNING;
-                $run->finished_at = null;
             } elseif ($hasPaused || $hasFailed) {
                 $run->status = AutomationStatuses::RUN_PARTIAL_FAILED;
-                $run->finished_at = null;
-            } elseif ($hasPending) {
+            } elseif ($allPending) {
                 $run->status = AutomationStatuses::RUN_PENDING;
-                $run->finished_at = null;
             } else {
                 // Fallback state
                 $run->status = AutomationStatuses::RUN_PENDING;
-                $run->finished_at = null;
             }
         }
-
         $run->save();
     }
 }

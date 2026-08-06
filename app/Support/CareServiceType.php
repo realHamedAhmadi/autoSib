@@ -4,6 +4,12 @@ namespace App\Support;
 
 use App\Services\Sib\Care\ExecuteCares\DiabeticService;
 use App\Services\Sib\Care\ExecuteCares\HyperTensionService;
+use App\Services\Sib\Care\ExecuteCares\MiddleAged\MiddleBMIService;
+use App\Services\Sib\Care\ExecuteCares\MiddleAged\MiddleDrugUseService;
+use App\Services\Sib\Care\ExecuteCares\MiddleAged\MiddleMentalHealthService;
+use App\Services\Sib\Care\ExecuteCares\MiddleAged\MiddlePhysicalActivityService;
+use App\Services\Sib\Care\ExecuteCares\MiddleAged\MiddleVulnerableFamilyScreeningService;
+use App\Services\Sib\Care\ExecuteCares\SuspectedAsthmaIdentifierService;
 use App\Services\Sib\Care\ExecuteCares\Young\BMIService;
 use App\Services\Sib\Care\ExecuteCares\Young\DentalHealthService;
 use App\Services\Sib\Care\ExecuteCares\Young\DrugUseService;
@@ -24,6 +30,14 @@ enum CareServiceType: string
     case YOUNG_BMI='young:bmi';
     case YOUNG_HYPER_TENSION_RISK='young:hyper_tension_risk';
     case YOUNG_DENTAL_HEALTH='young:dental_health';
+    case YOUNG_ASTHMA='young:asthma';
+
+    case MIDDLE_PHYSICAL_ACTIVITY='middle:physical_activity';
+    case MIDDLE_MENTAL_HEALTH='middle:mental_health';
+    case MIDDLE_VULNERABLE_FAMILY='middle:vulnerable_family';
+    case MIDDLE_DRUG_USE='middle:drug_use';
+    case MIDDLE_BMI='middle:bmi';
+    case MIDDLE_ASTHMA='middle:asthma';
 
 
     /**
@@ -42,6 +56,15 @@ enum CareServiceType: string
             self::YOUNG_BMI=>BMIService::class,
             self::YOUNG_HYPER_TENSION_RISK=>HyperTensionRiskService::class,
             self::YOUNG_DENTAL_HEALTH=>DentalHealthService::class,
+            self::YOUNG_ASTHMA=>SuspectedAsthmaIdentifierService::class,
+
+            //middle aged
+            self::MIDDLE_PHYSICAL_ACTIVITY=>MiddlePhysicalActivityService::class,
+            self::MIDDLE_MENTAL_HEALTH=>MiddleMentalHealthService::class,
+            self::MIDDLE_VULNERABLE_FAMILY=>MiddleVulnerableFamilyScreeningService::class,
+            self::MIDDLE_DRUG_USE=>MiddleDrugUseService::class,
+            self::MIDDLE_BMI=>MiddleBMIService::class,
+            self::MIDDLE_ASTHMA=>SuspectedAsthmaIdentifierService::class,
         };
     }
 }

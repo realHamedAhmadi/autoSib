@@ -23,30 +23,32 @@ class YoungCareSeeder extends Seeder
         $code=6931;
         $this->createCare($code,$title,CareServiceType::YOUNG_MENTAL_HEALTH->value);
 
-        $title='غربالگری مصرف مواد';
+        $title='غربالگری مصرف مواد جوانان';
         $code=7519;
         $this->createCare($code,$title,CareServiceType::YOUNG_DRUG_USE->value);
 
-        $title='ارزيابي از نظر سلامت اجتماعي';
+        $title='ارزيابي از نظر سلامت اجتماعي جوانان';
         $code=7517;
         $this->createCare($code,$title,CareServiceType::YOUNG_VULNERABLE_FAMILY->value);
 
 
-        $title='ارزيابي نمايه توده بدني';
+        $title='ارزيابي نمايه توده بدني جوانان';
         $code=6664;
         $this->createCare($code,$title,CareServiceType::YOUNG_BMI->value);
 
 
-        $title='ارزيابي از نظر خطر ابتلا به فشار خون بالا';
+        $title='ارزيابي از نظر خطر ابتلا به فشار خون بالا جوانان';
         $code=6665;
         $this->createCare($code,$title,CareServiceType::YOUNG_HYPER_TENSION_RISK->value);
 
 
-        $title='مراقبت از نظر وضعيت دهان و دندان';
+        $title='مراقبت از نظر وضعيت دهان و دندان جوانان';
         $code=6668;
         $this->createCare($code,$title,CareServiceType::YOUNG_DENTAL_HEALTH->value);
 
-
+        $title='شناسایی افراد مشکوک به آسم جوانان';
+        $code=24339;
+        $this->createCare($code,$title,CareServiceType::YOUNG_ASTHMA->value);
 
     }
 

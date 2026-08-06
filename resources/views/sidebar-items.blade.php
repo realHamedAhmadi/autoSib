@@ -10,19 +10,26 @@
     class="item menu-item"
 >
     <i class="users icon"></i>
-    <span>مراقیبت ماهانه دیابت</span>
+    <span>مراقبت ماهانه دیابت</span>
 </a>
 <a
     href="{{route('hyper-tension.index')}}"
     class="item menu-item"
 >
     <i class="user icon"></i>
-    <span>مراقیبت ماهانه فشارخون</span>
+    <span>مراقبت ماهانه فشارخون</span>
 </a>
 <a
     href="{{route('young.index')}}"
     class="item menu-item"
 >
     <i class="user icon"></i>
-    <span>مراقیبت جوانان</span>
+    <span>مراقبت جوانان</span>
+</a>
+<a
+    href="{{route('middle-aged.index')}}"
+    class="item menu-item"
+>
+    <i class="user icon"></i>
+    <span>مراقبت میانسالان</span>
 </a>

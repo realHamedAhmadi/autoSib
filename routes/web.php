@@ -3,11 +3,15 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AutomationMonitoringController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DiabeticController;
+use App\Http\Controllers\FamilyEnvHealthController;
+use App\Http\Controllers\HyperTensionController;
+use App\Http\Controllers\MiddleAgedController;
 use App\Http\Controllers\RetryAutomationRunController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\System\ProjectUpdaterController;
+use App\Http\Controllers\YoungCaresController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ResumeAutomationRunUserController;
-use App\Http\Controllers\ShowAutomationRunController;
 
 
 Route::middleware('guest')->group(function (){
@@ -17,17 +21,18 @@ Route::middleware('guest')->group(function (){
 });
 
 Route::middleware('role-pending')->group(function (){
-    Route::get('/role',[\App\Http\Controllers\RoleController::class,'getRole'])->name('get.role');
-    Route::post('/role',[\App\Http\Controllers\RoleController::class,'setRole'])->name('set.role');
+    Route::get('/role',[RoleController::class,'getRole'])->name('get.role');
+    Route::post('/role',[RoleController::class,'setRole'])->name('set.role');
 });
 Route::middleware('auth')->group(function (){
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [DashboardController::class,'index'])->name('dashboard');
     Route::get('/dashboard/poll', [DashboardController::class, 'poll'])->name('dashboard.poll');
-    Route::resource('family-env-health',\App\Http\Controllers\FamilyEnvHealthController::class);
-   Route::resource('diabetic',\App\Http\Controllers\DiabeticController::class);
-   Route::resource('hyper-tension',\App\Http\Controllers\HyperTensionController::class);
-   Route::resource('young',\App\Http\Controllers\YoungCaresController::class);
+    Route::resource('family-env-health',FamilyEnvHealthController::class);
+   Route::resource('diabetic',DiabeticController::class);
+   Route::resource('hyper-tension',HyperTensionController::class);
+   Route::resource('young',YoungCaresController::class);
+   Route::resource('middle-aged',MiddleAgedController::class);
 
     Route::post('/automation/runs/{run}/retry', [RetryAutomationRunController::class, 'retry'])
         ->name('automation.runs.retry');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Sib\Care\ExecuteCares\Young;
+namespace App\Services\Sib\Care\ExecuteCares\MiddleAged;
 
 use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Contracts\Cares\CareHandlerInterface;
@@ -10,7 +10,7 @@ use App\Data\User\UserPayload;
 use Illuminate\Support\Carbon;
 use Morilog\Jalali\Jalalian;
 
-abstract class BaseYoungCareService implements CareHandlerInterface,CareAlreadyTakenCheckerInterface
+abstract class BaseMiddleAgedCareService implements CareHandlerInterface,CareAlreadyTakenCheckerInterface
 {
 
     public function hasCare(SibUserInfo $userInfo): bool
