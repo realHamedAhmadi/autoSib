@@ -11,6 +11,7 @@ use App\Http\Controllers\RetryAutomationRunController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\System\ProjectUpdaterController;
 use App\Http\Controllers\TheElderlyController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\YoungCaresController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,10 +45,16 @@ Route::middleware('auth')->group(function (){
     Route::get('/automation/users/{user}/cares', [AutomationMonitoringController::class, 'userCaresApi'])->name('automation.users.cares');
 });
 
-Route::prefix('__system')->group(function () {
-    Route::get('/updater', [ProjectUpdaterController::class, 'index'])
-        ->name('system.updater.index');
+Route::middleware('admin')->group(function (){
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::resource('users',UserController::class);
+    Route::prefix('__system')->group(function () {
+        Route::get('/updater', [ProjectUpdaterController::class, 'index'])
+            ->name('system.updater.index');
 
-    Route::post('/update-from-github', [ProjectUpdaterController::class, 'update'])
-        ->name('system.updater.update');
+        Route::post('/update-from-github', [ProjectUpdaterController::class, 'update'])
+            ->name('system.updater.update');
+    });
 });
+
+

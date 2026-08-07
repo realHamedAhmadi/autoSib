@@ -48,7 +48,22 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('auth',function (){
-           return  Auth::check() && Auth::user()?->hasRole();
+           return  (Auth::check() && Auth::user()?->hasRole())
+               || (Auth::check() && Auth::user()?->isAdmin());
         });
+
+        Gate::define('sibAdminUser',function (){
+            return Auth::check() && Auth::user()?->hasRole();
+        });
+
+        Gate::define('admin',function (){
+            return Auth::check() && Auth::user()?->isAdmin();
+        });
+
+        Gate::define('owner',function (){
+            return Auth::check() && Auth::user()?->isOwner();
+        });
+
+
     }
 }

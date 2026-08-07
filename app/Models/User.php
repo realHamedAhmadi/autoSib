@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'code',
         'national_code',
+        'is_admin',
+        'is_active',
         'role_code',
         'unit_code',
         'unit_name',
@@ -49,6 +51,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isOwner()
+    {
+        return static::query()->where('is_admin',true)->firstOrFail()->id==$this->id;
+    }
+
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
+
+    public function isActive()
+    {
+        return $this->is_active;
     }
 
     public function hasRole():bool

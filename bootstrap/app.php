@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => \App\Http\Middleware\AuthMiddleware::class,
             'guest' => \App\Http\Middleware\GuestMiddleware::class,
             'role-pending' => \App\Http\Middleware\RolePendingMiddleware::class,
+            'admin'=>\App\Http\Middleware\AdminMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

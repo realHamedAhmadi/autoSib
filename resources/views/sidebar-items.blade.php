@@ -1,3 +1,4 @@
+@can('sibAdminUser')
 <a
     href="{{route('dashboard')}}"
     class="item menu-item"
@@ -40,3 +41,15 @@
     <i class="user icon"></i>
     <span>مراقبت سالمندان</span>
 </a>
+@endcan
+@can('admin')
+<a
+    href="{{route('users.index')}}"
+    class="item menu-item"
+>
+    <i class="user icon"></i>
+    <span>کاربران</span>
+</a>
+@endcan
+
+

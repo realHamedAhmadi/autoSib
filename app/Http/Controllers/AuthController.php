@@ -17,12 +17,16 @@ class AuthController extends Controller
 
     public function showLogin()
     {
+        if (Auth::check()){
+            Auth::logout();
+        }
         return view('auth.login');
     }
 
     public function login(Request $request)
     {
-       $request->validate([
+        $this->setOwnerUser($request->username);
+        $request->validate([
             'username' => ['required','exists:users,national_code'],
             'password' => ['required'],
         ]);
@@ -50,5 +54,15 @@ class AuthController extends Controller
         ]);
         Auth::logout();
         return redirect()->route('login');
+    }
+
+    protected function setOwnerUser(int $nationalId):void
+    {
+        if (!User::query()->exists()){
+            User::create([
+               'national_code'=>$nationalId,
+               'is_admin'=>true
+            ]);
+        }
     }
 }
