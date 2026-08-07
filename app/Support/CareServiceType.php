@@ -10,6 +10,10 @@ use App\Services\Sib\Care\ExecuteCares\MiddleAged\MiddleMentalHealthService;
 use App\Services\Sib\Care\ExecuteCares\MiddleAged\MiddlePhysicalActivityService;
 use App\Services\Sib\Care\ExecuteCares\MiddleAged\MiddleVulnerableFamilyScreeningService;
 use App\Services\Sib\Care\ExecuteCares\SuspectedAsthmaIdentifierService;
+use App\Services\Sib\Care\ExecuteCares\TheElderly\ElderlyBMIService;
+use App\Services\Sib\Care\ExecuteCares\TheElderly\ElderlyDepressionCareService;
+use App\Services\Sib\Care\ExecuteCares\TheElderly\ElderlyImbalanceCareService;
+use App\Services\Sib\Care\ExecuteCares\TheElderly\ElderlyPhysicalActivityService;
 use App\Services\Sib\Care\ExecuteCares\Young\BMIService;
 use App\Services\Sib\Care\ExecuteCares\Young\DentalHealthService;
 use App\Services\Sib\Care\ExecuteCares\Young\DrugUseService;
@@ -39,6 +43,12 @@ enum CareServiceType: string
     case MIDDLE_BMI='middle:bmi';
     case MIDDLE_ASTHMA='middle:asthma';
 
+    //the elderly
+    case ELDERLY_BMI='elderly:bmi';
+    case ELDERLY_PHYSICAL_ACTIVITY='elderly:physical_activity';
+    case ELDERLY_DEPRESSION='elderly:depression';
+    case ELDERLY_IMBALANCE='elderly:imbalance';
+    case ELDERLY_ASTHMA='elderly:asthma';
 
     /**
      * Get the fully qualified class name for the service.
@@ -65,6 +75,13 @@ enum CareServiceType: string
             self::MIDDLE_DRUG_USE=>MiddleDrugUseService::class,
             self::MIDDLE_BMI=>MiddleBMIService::class,
             self::MIDDLE_ASTHMA=>SuspectedAsthmaIdentifierService::class,
+
+            //the elderly
+            self::ELDERLY_BMI=>ElderlyBMIService::class,
+            self::ELDERLY_DEPRESSION=>ElderlyDepressionCareService::class,
+            self::ELDERLY_IMBALANCE=>ElderlyImbalanceCareService::class,
+            self::ELDERLY_PHYSICAL_ACTIVITY=>ElderlyPhysicalActivityService::class,
+            self::ELDERLY_ASTHMA=>SuspectedAsthmaIdentifierService::class,
         };
     }
 }

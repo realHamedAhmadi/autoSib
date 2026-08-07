@@ -10,6 +10,7 @@ use App\Http\Controllers\MiddleAgedController;
 use App\Http\Controllers\RetryAutomationRunController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\System\ProjectUpdaterController;
+use App\Http\Controllers\TheElderlyController;
 use App\Http\Controllers\YoungCaresController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,7 @@ Route::middleware('auth')->group(function (){
    Route::resource('hyper-tension',HyperTensionController::class);
    Route::resource('young',YoungCaresController::class);
    Route::resource('middle-aged',MiddleAgedController::class);
+   Route::resource('elderly',TheElderlyController::class);
 
     Route::post('/automation/runs/{run}/retry', [RetryAutomationRunController::class, 'retry'])
         ->name('automation.runs.retry');

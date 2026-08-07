@@ -33,3 +33,10 @@
     <i class="user icon"></i>
     <span>مراقبت میانسالان</span>
 </a>
+<a
+    href="{{route('elderly.index')}}"
+    class="item menu-item"
+>
+    <i class="user icon"></i>
+    <span>مراقبت سالمندان</span>
+</a>

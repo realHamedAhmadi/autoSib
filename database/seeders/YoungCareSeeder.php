@@ -15,7 +15,7 @@ class YoungCareSeeder extends Seeder
      */
     public function run(): void
     {
-        $title='ارزيابي فعاليت بدني';
+        $title='ارزيابي فعاليت بدني جوانان';
         $code=6786;
         $this->createCare($code,$title,CareServiceType::YOUNG_PHYSICAL_ACTIVITY->value);
 

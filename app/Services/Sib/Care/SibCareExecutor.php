@@ -54,6 +54,7 @@ class SibCareExecutor
 
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash,null,null,$adminUserId);
         $answers = $careService->firstForm($olderData,$userInfo,UserPayload::fromArray($payload));
+        Log::info($answers);
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, $answers,$adminUserId);
         $answers=$careService->secondForm($olderData,$userInfo,UserPayload::fromArray($payload));
         if (!empty($answers)){

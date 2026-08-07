@@ -84,7 +84,7 @@ trait BMITrait
         foreach ($this->otherAnswers as $key=>$an){
             $answers[]=[
                 "Id_Condition"=>$key,
-                "Answer"=>$a=isNull($an)?$olderCareDate->getAnswer($key):$an,
+                "Answer"=>$a=(is_null($an)?$olderCareDate->getAnswer($key):$an),
                 "PostProcessAnswer"=> $a
             ];
         }

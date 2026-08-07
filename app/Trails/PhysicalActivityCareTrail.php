@@ -11,16 +11,17 @@ trait PhysicalActivityCareTrail
 
     public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
+        $age=$userInfo->birthDate->age;
         $answers[]=[
             "Id_Condition"=> 34025,
-            "Answer"=> 5,
-            "PostProcessAnswer"=>5
+            "Answer"=> $a=$age<70?5:0,
+            "PostProcessAnswer"=>$a
         ];
 
         $answers[]=[
             "Id_Condition"=> 34026,
-            "Answer"=> 30,
-            "PostProcessAnswer"=>30
+            "Answer"=> $a=$age<70?30:0,
+            "PostProcessAnswer"=>$a
         ];
 
         $answers[]=[
