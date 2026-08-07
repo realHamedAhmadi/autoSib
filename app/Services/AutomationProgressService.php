@@ -51,7 +51,7 @@ class AutomationProgressService
             if ($allFinishedOrSkipped) {
                 $runUser->status = AutomationStatuses::USER_DONE;
             } elseif ($hasFailed) {
-                $runUser->status = AutomationStatuses::USER_PAUSED;
+                $runUser->status = AutomationStatuses::USER_FAILED;
             } else {
                 $runUser->status = AutomationStatuses::USER_RUNNING;
             }
