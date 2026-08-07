@@ -24,9 +24,6 @@ readonly class AuthMiddleware
             // If userInfo is successfully loaded, set it in request attributes.
             $request->setSibAdminUser($userInfo);
         } catch (Throwable $e) {
-            Auth::user()?->update([
-                'role_code'=>null
-            ]);
             // Check if exception indicates that the user profile/role is missing or not set.
             if ($this->isRoleNotSetException($e)) {
                 if ($request->expectsJson()) {

@@ -30,6 +30,9 @@ class AuthController extends Controller
             $token=$this->sibLoginService->login($request->username,$request->password);
             $user=User::where('national_code',$request->username)->firstOrFail();
             Auth::login($user);
+            $user->update([
+                'role_code'=>null
+            ]);
             setCurrentUserToken($token);
             return redirect()->route('get.role');
         }catch (SibApiException $exception){
