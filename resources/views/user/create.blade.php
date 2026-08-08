@@ -29,7 +29,7 @@
                 <div class="inline field">
                     <div class="ui checkbox">
                         <input type="hidden" name="is_admin" value="0">
-                        <input type="checkbox" name="is_admin" value="1" @checked(old('is_admin', $user->is_admin) == 1)>
+                        <input type="checkbox" name="is_admin" value="1" @checked(old('is_admin') == 1)>
                         <label>ادمین</label>
                     </div>
                     @error('is_admin')
