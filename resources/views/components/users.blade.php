@@ -51,6 +51,7 @@
         @endforelse
         </tbody>
     </table>
+    <x-paginator :paginator="$users" />
 </div>
 
 @push('scripts')

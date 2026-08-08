@@ -30,7 +30,9 @@ class TheElderlyController extends Controller
                 name: $request->name,
                 family: $request->family,
                 phone: $request->mobile,
-                gender: $request->gender
+                gender: $request->gender,
+                countPerPage: $request->countPerPage,
+                currentPageNumber: $request->page,
             )
         );
         return view('elderly.index',compact('users'));

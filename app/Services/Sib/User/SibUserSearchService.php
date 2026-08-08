@@ -2,9 +2,13 @@
 
 namespace App\Services\Sib\User;
 
+use App\Data\Sib\SibServiceGroup;
 use App\Data\Sib\User\SibUserSearchFilters;
 use App\Data\Sib\User\SibUserSummary;
 use App\Services\Sib\SibHttpClient;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 final class SibUserSearchService
 {
@@ -14,10 +18,12 @@ final class SibUserSearchService
     }
 
     /**
-     * @return array<int, array<string, mixed>>
+     * Search users and return a Laravel-like paginated collection.
      */
-    public function search(?string $adminUserIdentifier, SibUserSearchFilters $filters): SibUserSummary|array
+    public function search(?string $adminUserIdentifier, SibUserSearchFilters $filters): LengthAwarePaginator
     {
+        $totalCount=$this->count($adminUserIdentifier,$filters);
+
         $response = $this->client
             ->request($adminUserIdentifier)
             ->withHeaders([
@@ -26,37 +32,53 @@ final class SibUserSearchService
             ->get('/api/sib/v1/User/Search', $filters->toQuery());
 
         $data = $this->client->data($response);
-
         // Ensure data is an array of items
         $items = array_filter($data, 'is_array');
 
-        // Manually filter by phone if provided
-        if ($filters->phone !== null && $filters->phone !== '') {
-            $searchPhone = normalizeNumber($filters->phone);
-
-            $items = array_filter(
-                $items,
-                static function (array $item) use ($searchPhone): bool {
-                    $itemPhone = $item['PhoneM'] ?? null;
-
-                    if ($itemPhone === null) {
-                        return false;
-                    }
-
-                    $normalizedItemPhone = normalizeNumber((string) $itemPhone);
-
-                    // Check for exact match or suffix match (to handle 0 vs 98 prefixes)
-                    return $normalizedItemPhone === $searchPhone
-                        || str_ends_with($normalizedItemPhone, ltrim($searchPhone, '0'))
-                        || str_ends_with($searchPhone, ltrim($normalizedItemPhone, '0'));
-                }
-            );
-        }
-
-        return array_map(
+        // Map array items to DTOs
+        $mappedItems = array_map(
             static fn (array $item): SibUserSummary => SibUserSummary::fromApiResponse($item),
             $items,
         );
+
+        $perPage = $filters->countPerPage;
+        $currentPage = $filters->currentPageNumber;
+
+        return new LengthAwarePaginator(
+            collect($mappedItems),
+            $totalCount,
+            $perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]
+        );
     }
 
+    public function count(?string $adminUserIdentifier, SibUserSearchFilters $filters):int
+    {
+        $response = $this->client
+            ->request($adminUserIdentifier)
+            ->get('/api/sib/v1/User/Search/Count', $filters->toQuery());
+
+        return $this->client->data($response);
+    }
+
+    public function serviceGroup(?string $adminUserIdentifier,int $networkId)
+    {
+        $response = $this->client
+            ->request($adminUserIdentifier)
+            ->withHeaders([
+                'Referer' => config('sib.base_url') . '/sibnew/register-census/service-recipient',
+            ])
+            ->get('/api/sib/v1/BlockNumber/Search', [
+                'Id_Network'=>$networkId
+            ]);
+        $data=$this->client->data($response);
+        return  array_map(
+            static fn (array $item): SibServiceGroup => SibServiceGroup::fromApiResponse($item),
+            array_filter($data,'is_array'),
+        );
+    }
 }

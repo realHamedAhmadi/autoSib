@@ -11,7 +11,6 @@
             <x-users :users="$users" />
             <x-fixed-submit  icon="check" buttonClass="primary" />
         </form>
-        <x-pagination :paginator="$users=[]" />
     </div>
 @endsection
 @push('fixed-elements')

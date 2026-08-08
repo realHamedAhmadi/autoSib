@@ -55,7 +55,7 @@ final class SibHttpClient
         return $request;
     }
 
-    public function data(Response $response): array
+    public function data(Response $response): array|int
     {
         $payload = $this->payload($response);
 
@@ -83,7 +83,7 @@ final class SibHttpClient
 
         $data = $payload['Data'] ?? null;
 
-        if (! is_array($data)) {
+        if (! is_array($data) && !is_int($data)) {
             throw new SibApiException(
                 message: 'SIB returned an invalid response payload.',
                 sibCode: isset($payload['Code']) ? (int) $payload['Code'] : null,

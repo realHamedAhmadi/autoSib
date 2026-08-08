@@ -4,14 +4,14 @@
     $hasFilterRequest = request()->hasAny([
         'enable_national_id',
         'enable_name',
-        'enable_mobile',
+        //'enable_mobile',
         'enable_age',
         'enable_gender',
         'enable_service_group',
         'national_id',
         'name',
         'family',
-        'mobile',
+        //'mobile',
         'age_from',
         'age_to',
         'gender',
@@ -30,6 +30,10 @@
 
     // Filter panel is hidden by default, but stays open after search/filter request.
     $showFilterPanel = $hasFilterRequest;
+
+    $cacheKey="service-group-".request()->getSibAdminUser()->networkId;
+    $serviceGroups=\Illuminate\Support\Facades\Cache::get($cacheKey);
+    \Illuminate\Support\Facades\Log::info($serviceGroups);
 @endphp
 
 <button type="button" class="ui basic blue button" id="toggle-filter-panel">
@@ -63,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="field">
+                <div class="field" style="display: none">
                     <div class="ui checkbox">
                         <input type="checkbox" id="toggle-mobile" name="enable_mobile" value="1" {{ $enabled['mobile'] ? 'checked' : '' }}>
                         <label for="toggle-mobile">موبایل</label>
@@ -113,7 +117,7 @@
 
             <div class="three wide field filter-block" data-target="toggle-mobile">
                 <label>شماره موبایل</label>
-                <input type="text" name="mobile" value="{{ request('mobile') }}" placeholder="09...">
+                <input disabled type="text" name="mobile" value="{{ request('mobile') }}" placeholder="09...">
             </div>
         </div>
 
@@ -140,7 +144,7 @@
             <div class="six wide field filter-block" data-target="toggle-service-group">
                 <label>گروه خدمت</label>
                 <select name="service_groups[]" class="ui fluid search dropdown" multiple>
-                    @foreach($groups as $group)
+                    @foreach($serviceGroups as $group)
                         <option value="{{ $group->id }}"
                             {{ in_array((string) $group->id, (array) request('service_groups', []), true) ? 'selected' : '' }}>
                             {{ $group->title }}

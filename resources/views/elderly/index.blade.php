@@ -10,7 +10,6 @@
             @csrf
             <x-users :users="$users" />
         </form>
-        <x-pagination :paginator="$users=[]" />
     </div>
 @endsection
 @push('fixed-elements')
