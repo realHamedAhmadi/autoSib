@@ -34,7 +34,7 @@ final readonly class SibUserSearchFilters
             'ConditionNetwork' => $this->conditionNetwork,
             'Id_BlockNumber' => $this->idBlockNumber?array_values($this->idBlockNumber):null,
             'Id_FamilyRelation' => $this->idFamilyRelation?array_values($this->idFamilyRelation):null,
-            'PhoneM' => $this->phone,
+            //'PhoneM' => $this->phone,
             'Gender' => $this->gender,
             'CountPerPage' => $this->countPerPage,
         ], static fn($value) => $value !== null && $value !== '' && $value !== []);

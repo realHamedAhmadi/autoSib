@@ -2,12 +2,9 @@
 
 namespace App\Providers;
 
-use App\User;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use PhpParser\Node\Expr\AssignOp\Mod;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class QueryServiceProvider extends ServiceProvider

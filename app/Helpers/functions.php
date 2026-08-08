@@ -2,6 +2,30 @@
 use Illuminate\Support\Facades\Auth;
 use App\Data\Sib\Auth\AuthToken;
 
+
+if (!function_exists('normalizeNumber')) {
+    /**
+     * Convert Persian/Arabic digits to English and remove non-digit characters.
+     */
+    function normalizeNumber(?string $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        // Convert Persian and Arabic digits to English
+        $value = strtr($value, [
+            '۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4',
+            '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9',
+            '٠' => '0', '١' => '1', '٢' => '2', '٣' => '3', '٤' => '4',
+            '٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9',
+        ]);
+
+        // Remove everything except digits
+        return preg_replace('/\D+/', '', $value) ?? '';
+    }
+}
+
 function getCurrentUserToken(int|null $userId=null):string|null
 {
     if ($userId){
