@@ -8,6 +8,7 @@ use App\Services\Sib\User\SibUserSearchService;
 use App\Support\CareType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class HyperTensionController extends Controller
 {
@@ -16,6 +17,7 @@ class HyperTensionController extends Controller
         protected readonly AutomationService $automationService
     )
     {
+        Gate::authorize('allowedCare',CareType::HYPER_TENSION);
     }
     function index(Request $request,SibUserSearchService $searchService)
     {

@@ -6,9 +6,11 @@ use App\Contracts\Cares\CareAlreadyTakenCheckerInterface;
 use App\Exceptions\CareAlreadyTakenException;
 use App\Exceptions\DoesNotHaveCareException;
 use App\Exceptions\IgnoreCareException;
+use App\Listeners\PendingAutomationRunListener;
 use App\Models\AutomationRun;
 use App\Models\AutomationRunUser;
 use App\Models\AutomationRunUserCare;
+use App\Models\PendingAutomationRun;
 use App\Support\AutomationStatuses;
 use App\Services\AutomationProgressService;
 use App\Services\Sib\Care\SibCareExecutor;
@@ -54,6 +56,9 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         }
 
         if (! $lock->get()) {
+            $this->run->pending()->create([
+                'user_id'=>$this->run->user_id,
+            ]);
             Log::info('User processing is locked.', [
                 'user_id' => $adminUserId,
                 'lock_id' => $lockKey,
@@ -75,7 +80,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         } finally {
             $lock->release();
             Cache::forget($runningFlagKey);
-
+            $this->dispatchPendingRuns($this->run->user_id);
             Log::info('Job finished/cleanup completed.', [
                 'total' => $this->run->total_users,
                 'processed' => $this->run->processed_users,
@@ -232,5 +237,23 @@ class ProcessAutomationRunUserJob implements ShouldQueue
     protected function adminUserRanId(int $adminUserid)
     {
         return "run_admin_user_$adminUserid";
+    }
+
+    protected function dispatchPendingRuns($userId):void
+    {
+        $pendingRuns=PendingAutomationRun::where('user_id',$userId)->get();
+        foreach($pendingRuns as $pending){
+            ProcessAutomationRunUserJob::dispatch($pending->run);
+            $pending->delete();
+        }
+    }
+
+    public function failed(Throwable $e):void
+    {
+        $this->run->update([
+            'status'=>AutomationStatuses::RUN_FAILED,
+            'finished_at'=>now()
+        ]);
+        $this->dispatchPendingRuns($this->run->user_id);
     }
 }

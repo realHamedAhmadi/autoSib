@@ -7,6 +7,7 @@ use App\Services\AutomationService;
 use App\Services\Sib\User\SibUserSearchService;
 use App\Support\CareType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class TheElderlyController extends Controller
 {
@@ -15,6 +16,7 @@ class TheElderlyController extends Controller
         protected readonly AutomationService $automationService
     )
     {
+        Gate::authorize('allowedCare',CareType::THE_ELDERLY);
     }
 
     function index(Request $request,SibUserSearchService $searchService)

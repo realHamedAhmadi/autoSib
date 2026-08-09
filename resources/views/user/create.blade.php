@@ -37,6 +37,20 @@
                     @enderror
                 </div>
                 @endcan
+                <div class="field">
+                    <label>کاربر اجازه انجام کدام مراقبت ها رو داشته باشد؟</label>
+                    <select class="ui dropdown" name="allowed_cares[]" multiple>
+                        @foreach(\App\Support\CareType::cases() as $type)
+                            <option
+                                value="{{$type->name}}"
+                                @selected(in_array($type->name, old('allowed_cares', []), true))
+                            >{{$type->value}}</option>
+                        @endforeach
+                    </select>
+                    @error('allowed_cares')
+                    <div class="ui pointing red basic label">{{ $message }}</div>
+                    @enderror
+                </div>
                 <button type="submit" class="ui primary button">
                     <i class="save icon"></i>
                     ذخیره
@@ -52,5 +66,6 @@
 @push('scripts')
     <script>
         $('.ui.checkbox').checkbox();
+        $('.ui.dropdown').dropdown();
     </script>
 @endpush

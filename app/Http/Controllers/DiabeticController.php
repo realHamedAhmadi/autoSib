@@ -11,6 +11,7 @@ use App\Services\Sib\User\SibUserService;
 use App\Support\CareType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class DiabeticController extends Controller
 {
@@ -19,6 +20,7 @@ class DiabeticController extends Controller
         protected readonly AutomationService $automationService
     )
     {
+        Gate::authorize('allowedCare',CareType::DIABETIC);
     }
     function index(Request $request,SibUserSearchService $searchService)
     {

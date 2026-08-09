@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Data\Sib\User\SibAdminUserInfo;
+use App\Models\User;
 use App\Support\CareServiceType;
+use App\Support\CareType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -47,23 +49,24 @@ class AppServiceProvider extends ServiceProvider
             return $this->attributes->get('sibAdminUserInfo');
         });
 
-        Gate::define('auth',function (){
-           return  (Auth::check() && Auth::user()?->hasRole())
-               || (Auth::check() && Auth::user()?->isAdmin());
+        Gate::define('auth',function (User $user){
+           return  $user?->hasRole() || $user?->isAdmin();
         });
 
-        Gate::define('sibAdminUser',function (){
-            return Auth::check() && Auth::user()?->hasRole();
+        Gate::define('sibAdminUser',function (User $user){
+            return $user?->hasRole();
         });
 
-        Gate::define('admin',function (){
-            return Auth::check() && Auth::user()?->isAdmin();
+        Gate::define('admin',function (User $user){
+            return $user?->isAdmin();
         });
 
-        Gate::define('owner',function (){
-            return Auth::check() && Auth::user()?->isOwner();
+        Gate::define('owner',function (User $user){
+            return $user?->isOwner();
         });
 
-
+        Gate::define('allowedCare',function (User $user,CareType $type){
+            return $user->isAdmin() || $user->canAccessCareType($type);
+        });
     }
 }

@@ -11,6 +11,7 @@ use App\Support\AutomationStatuses;
 use App\Support\CareType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class YoungCaresController extends Controller
 {
@@ -21,6 +22,7 @@ class YoungCaresController extends Controller
         protected readonly AutomationService $automationService
     )
     {
+        Gate::authorize('allowedCare',CareType::YOUNG_PEOPLE);
     }
 
     function index(Request $request,SibUserSearchService $searchService)

@@ -32,4 +32,9 @@ class AutomationRun extends Model
         return $this->hasMany(AutomationRunUser::class);
     }
 
+    public function pending()
+    {
+        return $this->hasOne(PendingAutomationRun::class);
+    }
+
 }

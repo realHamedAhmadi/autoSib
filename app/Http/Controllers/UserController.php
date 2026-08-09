@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\CareType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -40,11 +43,14 @@ class UserController extends Controller
         }
         $validated=$request->validate([
             'name'=>'nullable|string|min:3|max:32',
-            'national_code'=>'required|string|size:10',
+            'national_code'=>'required|numeric|digits:10|unique:users,national_code',
             'is_admin'=>'nullable|in:0,1',
+            'allowed_cares'=>'nullable|array',
+            'allowed_cares.*'=>['required', Rule::in(array_column(CareType::cases(), 'name'))],
         ]);
 
-        User::create($validated);
+        $user=User::create($validated);
+        $this->setAllowedCares($user,$request);
         return redirect()->route('users.index');
     }
 
@@ -73,12 +79,15 @@ class UserController extends Controller
         }
         $validated = $request->validate([
             'name' => 'nullable|string|min:3|max:32',
-            'national_code' => 'required|digits:10',
+            'national_code'=>'required|numeric|digits:10|unique:users,national_code,'.$user->id,
             'is_admin' => 'nullable|in:0,1',
             'is_active' => 'nullable|in:0,1',
+            'allowed_cares'=>'nullable|array',
+            'allowed_cares.*'=>['required', Rule::in(array_column(CareType::cases(), 'name'))],
         ]);
 
         $user->update($validated);
+        $this->setAllowedCares($user,$request);
         return redirect()->route('users.index');
     }
 
@@ -94,5 +103,17 @@ class UserController extends Controller
 
         $user->delete();
         return back();
+    }
+
+    protected function setAllowedCares($user,$req)
+    {
+        $user->allowedCares()->delete();
+        if ($req->allowed_cares) {
+            foreach ($req->allowed_cares as $care) {
+                $user->allowedCares()->create([
+                    'type'=>$care
+                ]);
+            }
+        }
     }
 }

@@ -33,6 +33,7 @@ class AuthController extends Controller
         try {
             $token=$this->sibLoginService->login($request->username,$request->password);
             $user=User::where('national_code',$request->username)->firstOrFail();
+
             Auth::login($user);
             $user->update([
                 'role_code'=>null

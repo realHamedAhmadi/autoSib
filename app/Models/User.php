@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\CareType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -73,6 +74,11 @@ class User extends Authenticatable
         return (bool)$this?->role_code;
     }
 
+    public function canAccessCareType(CareType $type)
+    {
+        return $this->allowedCares()->type($type)->exists();
+    }
+
     public function familyEnvHealth()
     {
         return $this->hasOne(FamilyEnvHealth::class);
@@ -91,5 +97,10 @@ class User extends Authenticatable
     public function diabetic()
     {
         return $this->hasOne(Diabetic::class,'user_id');
+    }
+
+    public function allowedCares()
+    {
+        return $this->hasMany(AllowedCare::class);
     }
 }
