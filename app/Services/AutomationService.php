@@ -30,8 +30,8 @@ class AutomationService
                 'total_cares' => $totalCares,
                 'processed_cares' => 0,
                 'input' => [
-                    'users' => $users,
-                    'care_type' => $careType,
+                    /*'users' => $users,
+                    'care_type' => $careType,*/
                 ],
             ]);
 

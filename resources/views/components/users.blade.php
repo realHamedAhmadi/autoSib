@@ -34,6 +34,12 @@
                             value="{{ $user->userToken }}"
                             class="user-checkbox"
                         >
+                        <input
+                            type="checkbox"
+                            name="users[{{$key}}][name]"
+                            value="{{ $user->fullname() }}"
+                            class="user-checkbox"
+                        >
                         <label></label>
                     </div>
                 </td>

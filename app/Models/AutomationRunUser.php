@@ -11,6 +11,7 @@ class AutomationRunUser extends Model
     protected $fillable = [
         'automation_run_id',
         'sib_user_id',
+        'sib_user_name',
         'status',
         'total_cares',
         'processed_cares',

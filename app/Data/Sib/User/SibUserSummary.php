@@ -35,4 +35,9 @@ final readonly class SibUserSummary
             userToken: isset($item['UserToken']['Data']) ? (string) $item['UserToken']['Data'] : null,
         );
     }
+
+    public function fullname():string
+    {
+        return  $this->name.' '.$this->family;
+    }
 }

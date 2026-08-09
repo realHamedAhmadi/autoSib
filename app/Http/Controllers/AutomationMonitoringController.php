@@ -5,6 +5,7 @@ use App\Models\AutomationRun;
 use App\Models\AutomationRunUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Morilog\Jalali\Jalalian;
 
 class AutomationMonitoringController extends Controller
@@ -23,6 +24,9 @@ class AutomationMonitoringController extends Controller
      */
     public function show(AutomationRun $run): View
     {
+        if ($run->user_id != Auth::id() && !Auth::user()?->isOwner()){
+            abort(404);
+        }
         $run->load(['users' => function($query) {
             $query->orderBy('id', 'asc');
         }]);
@@ -35,6 +39,9 @@ class AutomationMonitoringController extends Controller
      */
     public function statusApi(AutomationRun $run): JsonResponse
     {
+        if ($run->user_id != Auth::id() && !Auth::user()?->isOwner()){
+            abort(404);
+        }
         return response()->json([
             'status' => $run->status,
             'started_at'=>$run->started_at
@@ -53,6 +60,7 @@ class AutomationMonitoringController extends Controller
                 return [
                     'id' => $user->id,
                     'sib_user_id' => $user->sib_user_id,
+                    'user_name' => $user->payload['name'] ??'',
                     'status' => $user->status,
                     'processed_cares' => $user->processed_cares,
                     'total_cares' => $user->total_cares,
@@ -68,6 +76,9 @@ class AutomationMonitoringController extends Controller
      */
     public function userCaresApi(AutomationRunUser $user): JsonResponse
     {
+        if ($user->run->user_id != Auth::id() && !Auth::user()?->isOwner()){
+            abort(404);
+        }
         $cares = $user->cares()->with('care')->orderBy('sort_order', 'asc')->get();
 
         return response()->json([

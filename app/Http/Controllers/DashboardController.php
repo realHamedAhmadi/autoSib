@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Morilog\Jalali\Jalalian;
 
 class DashboardController extends Controller
@@ -51,20 +52,45 @@ class DashboardController extends Controller
      */
     private function getDashboardData(Request $request): array
     {
+        $authUser = Auth::user();
         $stuckMinutes = (int) config('automation.stuck_minutes', 30);
         $today = Carbon::today();
 
         $pendingRuns = AutomationRun::query()
+            ->when(
+                ! $authUser->isOwner(),
+                function ($query) use ($authUser) {
+                    $query->where(function ($query) use ($authUser) {
+                        $query->where('user_id', $authUser->id);
+                    });
+                }
+            )
             ->where('status', 'pending')
             ->latest('id')
             ->get();
 
         $todayRuns = AutomationRun::query()
+            ->when(
+                ! $authUser->isOwner(),
+                function ($query) use ($authUser) {
+                    $query->where(function ($query) use ($authUser) {
+                        $query->where('user_id', $authUser->id);
+                    });
+                }
+            )
             ->whereDate('created_at', $today)
             ->latest('id')
             ->get();
 
         $stuckRuns = AutomationRun::query()
+            ->when(
+                ! $authUser->isOwner(),
+                function ($query) use ($authUser) {
+                    $query->where(function ($query) use ($authUser) {
+                        $query->where('user_id', $authUser->id);
+                    });
+                }
+            )
             ->where('status', 'running')
             ->where('updated_at', '<=', now()->subMinutes($stuckMinutes))
             ->latest('updated_at')
@@ -72,6 +98,14 @@ class DashboardController extends Controller
             ->get();
 
         $recentRunsQuery = AutomationRun::query()
+            ->when(
+                ! $authUser->isOwner(),
+                function ($query) use ($authUser) {
+                    $query->where(function ($query) use ($authUser) {
+                        $query->where('user_id', $authUser->id);
+                    });
+                }
+            )
             ->latest('id');
 
         if ($request->filled('status')) {
