@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AutomationRun;
+use App\Support\AutomationStatuses;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -140,7 +141,8 @@ class DashboardController extends Controller
                     ->where('status', 'running')
                     ->count(),
                 'failed_runs' => AutomationRun::query()
-                    ->where('status', 'failed')
+                    ->where('status', AutomationStatuses::RUN_FAILED)
+                    ->orWhere('status', AutomationStatuses::RUN_PARTIAL_FAILED)
                     ->count(),
                 'done_runs' => AutomationRun::query()
                     ->where('status', 'done')
