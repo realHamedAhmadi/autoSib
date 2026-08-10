@@ -119,4 +119,26 @@ trait BMITrait
 
         throw new \LogicException('Unable to select a weighted answer.');
     }
+
+    protected function mergeWithoutChangingExistingKeys(
+        array $first,
+        array $second
+    ): array {
+        foreach ($second as $key => $value) {
+            if (! array_key_exists($key, $first)) {
+                $first[$key] = $value;
+                continue;
+            }
+
+            if (is_array($first[$key]) && is_array($value)) {
+                $first[$key] = $this->mergeWithoutChangingExistingKeys(
+                    $first[$key],
+                    $value
+                );
+            }
+        }
+
+        return $first;
+    }
+
 }

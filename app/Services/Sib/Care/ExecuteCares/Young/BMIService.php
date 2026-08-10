@@ -12,7 +12,7 @@ class BMIService extends BaseYoungCareService
         $this->otherAnswers=[
             25668=>0,
         ];
-        $this->threeOptionAnswers=array_merge(
+        $this->threeOptionAnswers=$this->mergeWithoutChangingExistingKeys(
             $this->threeOptionAnswers,
             [
                 // Physical activity: none, below 150 minutes, 150+ minutes weekly.

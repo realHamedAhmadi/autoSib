@@ -33,7 +33,6 @@
 
     $cacheKey="service-group-".request()->getSibAdminUser()->networkId;
     $serviceGroups=\Illuminate\Support\Facades\Cache::get($cacheKey);
-    \Illuminate\Support\Facades\Log::info($serviceGroups);
 @endphp
 
 <button type="button" class="ui basic blue button" id="toggle-filter-panel">
