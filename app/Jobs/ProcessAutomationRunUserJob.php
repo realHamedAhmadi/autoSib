@@ -255,6 +255,17 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             'status'=>AutomationStatuses::RUN_FAILED,
             'finished_at'=>now()
         ]);
+        $runUser=$this->run->users()->where('status',AutomationStatuses::USER_RUNNING)->first();
+        $runUser->update([
+            'status'=>AutomationStatuses::USER_FAILED,
+            'finished_at'=>now()
+        ]);
+        $runUser->cares()
+            ->where('status',AutomationStatuses::CARE_RUNNING)
+            ->update([
+                'status'=>AutomationStatuses::CARE_FAILED,
+                'finished_at'=>now()
+            ]);
         $this->dispatchPendingRuns($this->run->user_id);
     }
 }
