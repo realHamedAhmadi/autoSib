@@ -42,15 +42,15 @@ class MiddleAgedCareSeeder extends Seeder
 
     }
 
-    protected function careExists($code,$title)
+    protected function careExists($code)
     {
         return Care::type(CareType::MIDDLE_AGED)
-            ->where('code',$code)->where('title',$title)->exists();
+            ->where('code',$code)->exists();
     }
 
     protected function createCare($code,$title,$service)
     {
-        if (!$this->careExists($code,$title)){
+        if (!$this->careExists($code)){
             Care::create(array_merge(
                 compact('code','title','service')
                 ,['type'=>CareType::MIDDLE_AGED->name]
