@@ -18,6 +18,11 @@ abstract class BaseYoungCareService implements CareHandlerInterface,CareAlreadyT
         return true;
     }
 
+    public function action(int $sibAdminUserId, SibUserInfo $userInfo, ?UserPayload $payload): void
+    {
+        // TODO: Implement action() method.
+    }
+
     public function alreadyTaken(Carbon $latestVisitDate): bool
     {
         return Jalalian::fromCarbon($latestVisitDate)->getYear()==Jalalian::now()->getYear();

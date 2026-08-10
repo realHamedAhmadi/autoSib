@@ -5,6 +5,7 @@ namespace App\Services\Sib\Care\ExecuteCares\Young;
 use App\Data\Sib\Care\CompletedCareData;
 use App\Data\Sib\User\SibUserInfo;
 use App\Data\User\UserPayload;
+use App\Services\Sib\SibHttpClient;
 
 class DentalHealthService extends BaseYoungCareService
 {
@@ -29,6 +30,28 @@ class DentalHealthService extends BaseYoungCareService
     public function secondForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
         return [];
+    }
+
+    public function action(int $sibAdminUserId, SibUserInfo $userInfo, ?UserPayload $payload): void
+    {
+        $arr=[
+            'actions'=>[
+                [
+                    "id_ToothActivity"=>100,
+                    "id_ToothNumber"=> 1000
+                ],
+                [
+                    "id_ToothActivity"=> 127,
+                    "id_ToothNumber"=>1000
+                ]
+            ],
+            'needs'=>[],
+            'states'=>[]
+        ];
+        $client=app()->make(SibHttpClient::class);
+        $client->request($sibAdminUserId)
+            ->post('/api/sib/v1/Tooth/SaveForm', $arr);
+
     }
 
     /**

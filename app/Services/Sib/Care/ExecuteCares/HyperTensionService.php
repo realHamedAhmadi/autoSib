@@ -153,4 +153,8 @@ class HyperTensionService implements CareHandlerInterface,CareAlreadyTakenChecke
         return [];
     }
 
+    public function action(int $sibAdminUserId, SibUserInfo $userInfo, ?UserPayload $payload): void
+    {
+        // TODO: Implement action() method.
+    }
 }

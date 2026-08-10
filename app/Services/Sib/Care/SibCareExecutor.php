@@ -31,6 +31,7 @@ class SibCareExecutor
      */
     public function execute(string $adminUserId, string $sibUserId, string $sibCareId, array $payload): void
     {
+        $payload=UserPayload::fromArray($payload);
         $care = Care::findOrFail($sibCareId);
         Log::info($care->title);
         $careService=app()->make($care->service->getClassName());
@@ -53,14 +54,16 @@ class SibCareExecutor
         }
 
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash,null,null,$adminUserId);
-        $answers = $careService->firstForm($olderData,$userInfo,UserPayload::fromArray($payload));
+        $answers = $careService->firstForm($olderData,$userInfo,$payload);
         //Log::info($answers);
         $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, $answers,$adminUserId);
-        $answers=$careService->secondForm($olderData,$userInfo,UserPayload::fromArray($payload));
+        $answers=$careService->secondForm($olderData,$userInfo,$payload);
         if (!empty($answers)){
             $hash = $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, $answers,$adminUserId);
         }
         $this->sibCareService->saveFrom($care->code, $careIndexItem->hash, $hash, null,$adminUserId);
+
+        $careService->action($adminUserId,$userInfo,$payload);
     }
 
     protected function getOlderData(string $adminUserId, SibUserInfo $userInfo, Care $care): CompletedCareData

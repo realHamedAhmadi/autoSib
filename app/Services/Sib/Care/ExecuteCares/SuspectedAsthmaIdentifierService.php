@@ -42,4 +42,9 @@ class SuspectedAsthmaIdentifierService implements CareHandlerInterface,CareAlrea
     {
         return [];
     }
+
+    public function action(int $sibAdminUserId, SibUserInfo $userInfo, ?UserPayload $payload): void
+    {
+        // TODO: Implement action() method.
+    }
 }
