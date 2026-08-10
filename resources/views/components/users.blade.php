@@ -14,6 +14,8 @@
             <th>نام خانوادگی</th>
             <th>موبایل</th>
             <th>کد ملی</th>
+            <th>سن</th>
+            <th>توضیحات</th>
         </tr>
         </thead>
 
@@ -49,6 +51,8 @@
                     <a href="tel:{{ $user->mobile ?: '-' }}">{{ $user->mobile ?: '-' }}</a>
                 </td>
                 <td>{{ $user->nationalId ?: '-' }}</td>
+                <td>{{ $user->ageTitle }}</td>
+                <td>{{ $user->comment }}</td>
             </tr>
         @empty
             <tr>

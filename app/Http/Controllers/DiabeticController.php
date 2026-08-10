@@ -31,11 +31,15 @@ class DiabeticController extends Controller
                 fromAgeYears: $request->age_from,
                 toAgeYears: $request->age_to,
                 idSick: $this->sickIds,
+                idFamilyRelation: $request->family_relation,
                 idBlockNumber: $request->service_groups,
                 name: $request->name,
                 family: $request->family,
                 phone: $request->mobile,
-                gender: $request->gender
+                gender: $request->gender,
+                idMarriageType: $request->marriage_types,
+                countPerPage: $request->countPerPage,
+                currentPageNumber: $request->page
             )
         );
         return view('diabetic.index',compact('users'));

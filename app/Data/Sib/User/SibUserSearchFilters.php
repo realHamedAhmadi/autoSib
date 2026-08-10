@@ -15,6 +15,7 @@ final class SibUserSearchFilters
         public ?string $family = null,
         public ?string $phone = null,
         public ?int    $gender = null,
+        public ?array  $idMarriageType=[],
         public ?int    $countPerPage=null,
         public ?int    $currentPageNumber=null,
         public ?int    $conditionNetwork = null,
@@ -38,6 +39,7 @@ final class SibUserSearchFilters
             'Id_FamilyRelation' => $this->idFamilyRelation?array_values($this->idFamilyRelation):null,
             //'PhoneM' => $this->phone,
             'Gender' => $this->gender,
+            'Id_MarriageTyp' => $this->idMarriageType?array_values($this->idMarriageType):null,
             'CurrentPageNumber' => $this->currentPageNumber,
             'CountPerPage' => $this->countPerPage,
         ], static fn($value) => $value !== null && $value !== '' && $value !== []);

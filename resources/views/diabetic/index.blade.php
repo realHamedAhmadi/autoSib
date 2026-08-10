@@ -9,7 +9,6 @@
         <form id="list-form" class="ui form" action="{{route('diabetic.store')}}" method="post" style="padding-bottom: 35px">
             @csrf
             <x-users :users="$users" />
-            <x-fixed-submit  icon="check" buttonClass="primary" />
         </form>
     </div>
 @endsection

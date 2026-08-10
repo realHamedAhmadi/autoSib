@@ -11,7 +11,7 @@
     href="{{route('diabetic.index')}}"
     class="item menu-item"
 >
-    <i class="users icon"></i>
+    <i class="user icon"></i>
     <span>مراقبت ماهانه دیابت</span>
 </a>
 @endcan

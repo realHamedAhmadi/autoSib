@@ -16,6 +16,8 @@
         'age_to',
         'gender',
         'service_groups',
+        'marriage_types',
+        'family_relation'
     ]);
 
     // Only national_id is enabled by default.
@@ -150,6 +152,24 @@
                         </option>
                     @endforeach
                 </select>
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <div class="ui checkbox slider">
+                        <input type="checkbox" id="toggle-family-relation" name="family_relation[]"
+                               value="63"
+                            {{ in_array('63', (array) request('family_relation', []), true) ? 'checked' : '' }}>
+                        <label for="toggle-family-relation">سرپرست</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox slider">
+                        <input type="checkbox" id="toggle-marriage-types" name="marriage_types[]"
+                               value="{{\App\Support\MaritalStatus::MARRIED->value}}"
+                            {{ in_array((string) \App\Support\MaritalStatus::MARRIED->value, (array) request('marriage_types', []), true) ? 'checked' : '' }}>
+                        <label for="toggle-marriage-types">متاهل</label>
+                    </div>
+                </div>
             </div>
         </div>
 
