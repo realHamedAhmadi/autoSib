@@ -649,7 +649,7 @@
                     desc: 'موفق'
                 },
                 skipped: {
-                    icon: 'minus circle orange icon',
+                    icon: 'info circle orange icon',
                     color: 'orange',
                     desc: 'نادیده گرفته شد'
                 },
@@ -900,11 +900,14 @@
                             color: 'grey',
                             desc: care.status || 'نامشخص'
                         };
-
+                        console.log(careConfig)
                         let stepClass = 'step';
 
-                        if (care.status === 'done' || care.status === 'skipped') {
+                        if (care.status === 'done') {
                             stepClass = 'completed step';
+                        }
+                        if (care.status === 'skipped') {
+                            stepClass = 'step';
                         }
 
                         if (care.status === 'running') {
@@ -921,6 +924,15 @@
                             errorDescription = `
                                 <div style="color:#db2828;font-size:11px;margin-top:5px;">
                                     <strong>خطا:</strong>
+                                    ${escapeHtml(care.error_message)}
+                                </div>
+                            `;
+                        }
+
+                        if (care.status === 'skipped' && care.error_message) {
+                            errorDescription = `
+                                <div style="color:#fbbd08;font-size:11px;margin-top:5px;">
+                                    <strong></strong>
                                     ${escapeHtml(care.error_message)}
                                 </div>
                             `;
