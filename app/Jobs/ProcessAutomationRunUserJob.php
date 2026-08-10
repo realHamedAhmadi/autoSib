@@ -76,6 +76,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                     $executor,
                     $progressService
                 );
+                sleep(20);
             }
         } finally {
             $lock->release();
@@ -209,13 +210,13 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                 ]);
                 $progressService->refreshRunUser($runUser->id);
                 $progressService->refreshRun($runUser->automation_run_id);
-                sleep(10);
+                sleep(15);
                 continue;
             }
 
             $progressService->refreshRunUser($runUser->id);
             $progressService->refreshRun($runUser->automation_run_id);
-            sleep(10);
+            sleep(15);
         }
 
         $runUser->update([
