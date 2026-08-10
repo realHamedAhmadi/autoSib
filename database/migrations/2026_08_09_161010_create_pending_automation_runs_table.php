@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pending_automation_runs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('users')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('automation_run_id')->constrained('automation_runs')->cascadeOnDelete();
             $table->timestamps();
         });
