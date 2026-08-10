@@ -15,7 +15,16 @@ class AutomationMonitoringController extends Controller
      */
     public function index(): View
     {
-        $runs = AutomationRun::latest()->paginate(10);
+        $authUser = Auth::user();
+        $runs = AutomationRun::query()
+            ->when(
+                ! $authUser->isOwner(),
+                function ($query) use ($authUser) {
+                    $query->where(function ($query) use ($authUser) {
+                        $query->where('user_id', $authUser->id);
+                    });
+                }
+            )->latest()->paginate(10);
         return view('automation.index', compact('runs'));
     }
 
