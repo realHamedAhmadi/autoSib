@@ -15,9 +15,18 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     protected array $ignoreCaresInListPending=[
+        CareServiceType::DIABETIC,
+        CareServiceType::HYPER_TENSION,
+
         //young
         CareServiceType::YOUNG_BMI,
         CareServiceType::YOUNG_HYPER_TENSION_RISK,
+
+        //middle aged
+        CareServiceType::MIDDLE_BMI,
+
+        //the elderly
+        CareServiceType::ELDERLY_BMI,
     ];
 
 
