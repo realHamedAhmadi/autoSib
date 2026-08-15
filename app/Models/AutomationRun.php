@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -26,6 +27,11 @@ class AutomationRun extends Model
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
     ];
+
+    public function scopeForUser(Builder $query, User $user): Builder
+    {
+        return $user->isOwner() ? $query : $query->where('user_id', $user->id);
+    }
 
     public function users(): HasMany
     {
