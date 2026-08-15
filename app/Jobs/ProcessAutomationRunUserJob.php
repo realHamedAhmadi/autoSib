@@ -22,6 +22,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Throwable;
 
 class ProcessAutomationRunUserJob implements ShouldQueue
@@ -30,6 +31,8 @@ class ProcessAutomationRunUserJob implements ShouldQueue
 
     public int $tries = 1;
     public int $timeout = 1800;
+
+    protected int $sleepTime=15;
 
     public function __construct(public AutomationRun $run)
     {
@@ -199,6 +202,10 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                     ]);
                 }
 
+                if (Str::contains($e->getMessage(),'صبر کرده و سپس مجددا تلاش کنید')){
+                    $this->sleepTime+=5;
+                }
+
                 $care->update([
                     'status' => $status,
                     'error_message' => $e->getMessage(),
@@ -210,13 +217,13 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                 ]);
                 $progressService->refreshRunUser($runUser->id);
                 $progressService->refreshRun($runUser->automation_run_id);
-                sleep(15);
+                sleep($this->sleepTime);
                 continue;
             }
 
             $progressService->refreshRunUser($runUser->id);
             $progressService->refreshRun($runUser->automation_run_id);
-            sleep(15);
+            sleep($this->sleepTime);
         }
 
         $runUser->update([
