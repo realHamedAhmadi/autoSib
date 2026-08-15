@@ -15,9 +15,9 @@ class ElderlyDepressionCareService extends BaseElderlyCareService
      */
     protected const QUESTION_MAP = [
         // Q1: Satisfied with life? (Reverse: No = 1 point, Yes = 0 points)
-        21184 => [1 => 105195, 0 => 105196],
+        21184 => [1 => 105197, 0 => 105196],
         // Q2: Empty life? (Direct: Yes = 1 point, No = 0 points)
-        21186 => [1 => 105198, 0 => 105197],
+        21186 => [1 => 105198, 0 => 105199],
         // Q3: Often bored? (Direct: Yes = 1 point, No = 0 points)
         21188 => [1 => 105200, 0 => 105201],
         // Q4: Good spirits? (Reverse: No = 1 point, Yes = 0 points)

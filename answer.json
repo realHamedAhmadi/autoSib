@@ -1,59 +1,79 @@
 {
     "Answers": [
         {
-            "Id_Condition": 10001,
-            "Answer": 158,
-            "PostProcessAnswer": 158
+            "Id_Condition": 29694,
+            "Answer": 1,
+            "PostProcessAnswer": 1
         },
         {
-            "Id_Condition": 10002,
-            "Answer": 97,
-            "PostProcessAnswer": 97
+            "Id_Condition": 21184,
+            "Answer": 105197,
+            "PostProcessAnswer": 105197
         },
         {
-            "Id_Condition": 10004,
-            "Answer": 38.85595257170325,
-            "PostProcessAnswer": 38.85595257170325
+            "Id_Condition": 21186,
+            "Answer": 105199,
+            "PostProcessAnswer": 105199
         },
         {
-            "Id_Condition": 25668,
+            "Id_Condition": 21188,
+            "Answer": 105201,
+            "PostProcessAnswer": 105201
+        },
+        {
+            "Id_Condition": 21191,
+            "Answer": 105203,
+            "PostProcessAnswer": 105203
+        },
+        {
+            "Id_Condition": 21193,
+            "Answer": 105205,
+            "PostProcessAnswer": 105205
+        },
+        {
+            "Id_Condition": 21195,
+            "Answer": 105207,
+            "PostProcessAnswer": 105207
+        },
+        {
+            "Id_Condition": 21197,
+            "Answer": 105209,
+            "PostProcessAnswer": 105209
+        },
+        {
+            "Id_Condition": 21201,
+            "Answer": 105211,
+            "PostProcessAnswer": 105211
+        },
+        {
+            "Id_Condition": 21204,
+            "Answer": 105213,
+            "PostProcessAnswer": 105213
+        },
+        {
+            "Id_Condition": 21215,
+            "Answer": 105215,
+            "PostProcessAnswer": 105215
+        },
+        {
+            "Id_Condition": 21217,
+            "Answer": 105217,
+            "PostProcessAnswer": 105217
+        },
+        {
+            "Id_Condition": 35720,
             "Answer": 0,
             "PostProcessAnswer": 0
         },
         {
-            "Id_Condition": 16029,
-            "Answer": 100036,
-            "PostProcessAnswer": 100036
+            "Id_Condition": 28136,
+            "Answer": 0,
+            "PostProcessAnswer": 0
         },
         {
-            "Id_Condition": 16031,
-            "Answer": 100039,
-            "PostProcessAnswer": 100039
-        },
-        {
-            "Id_Condition": 16026,
-            "Answer": 100027,
-            "PostProcessAnswer": 100027
-        },
-        {
-            "Id_Condition": 16027,
-            "Answer": 100030,
-            "PostProcessAnswer": 100030
-        },
-        {
-            "Id_Condition": 16028,
-            "Answer": 100033,
-            "PostProcessAnswer": 100033
-        },
-        {
-            "Id_Condition": 16032,
-            "Answer": 100042,
-            "PostProcessAnswer": 100042
-        },
-        {
-            "Id_Condition": 16656,
-            "Answer": 100429,
-            "PostProcessAnswer": 100429
+            "Id_Condition": 23255,
+            "Answer": 0,
+            "PostProcessAnswer": 0
         }
     ]
 }
