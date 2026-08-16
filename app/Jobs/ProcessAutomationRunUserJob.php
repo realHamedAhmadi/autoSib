@@ -203,7 +203,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
                 }
 
                 if (Str::contains($e->getMessage(),'صبر کرده و سپس مجددا تلاش کنید')){
-                    $this->sleepTime+=5;
+                    $this->sleepTime+=10;
                 }
 
                 $care->update([
