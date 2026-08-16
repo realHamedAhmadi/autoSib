@@ -39,7 +39,8 @@ class TheElderlyController extends Controller
                 currentPageNumber: $request->page
             )
         );
-        return view('elderly.index',compact('users'));
+        $careType=CareType::THE_ELDERLY;
+        return view('elderly.index',compact('users','careType'));
     }
 
     function store(Request $request,)

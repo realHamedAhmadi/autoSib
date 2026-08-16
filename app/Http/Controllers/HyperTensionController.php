@@ -39,7 +39,8 @@ class HyperTensionController extends Controller
                 currentPageNumber: $request->page
             )
         );
-        return view('hyper-tension.index',compact('users'));
+        $careType=CareType::HYPER_TENSION;
+        return view('hyper-tension.index',compact('users','careType'));
     }
 
     function store(Request $request,)

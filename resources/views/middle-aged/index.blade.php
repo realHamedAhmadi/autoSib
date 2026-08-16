@@ -8,7 +8,7 @@
         <x-filter :groups="$serviceGroups=[]" />
         <form id="list-form" class="ui form" action="{{route('middle-aged.store')}}" method="post" style="padding-bottom: 35px">
             @csrf
-            <x-users :users="$users" />
+            <x-users :users="$users" :careType="$careType"/>
         </form>
     </div>
 @endsection

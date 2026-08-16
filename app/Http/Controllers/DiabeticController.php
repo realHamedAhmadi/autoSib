@@ -8,6 +8,7 @@ use App\Services\AutomationService;
 use App\Services\Sib\Care\SibCareService;
 use App\Services\Sib\User\SibUserSearchService;
 use App\Services\Sib\User\SibUserService;
+use App\Support\CareChecker;
 use App\Support\CareType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,8 @@ class DiabeticController extends Controller
                 currentPageNumber: $request->page
             )
         );
-        return view('diabetic.index',compact('users'));
+        $careType=CareType::DIABETIC;
+        return view('diabetic.index',compact('users','careType'));
     }
 
     function store(Request $request,)

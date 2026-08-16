@@ -23,4 +23,9 @@ class Care extends Model
     {
         return $q->where('type',$type->name);
     }
+
+    function automationCares()
+    {
+        return $this->hasMany(AutomationRunUserCare::class);
+    }
 }

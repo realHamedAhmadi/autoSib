@@ -41,7 +41,8 @@ class MiddleAgedController extends Controller
                 currentPageNumber: $request->page
             )
         );
-        return view('middle-aged.index',compact('users'));
+        $careType=CareType::MIDDLE_AGED;
+        return view('middle-aged.index',compact('users','careType'));
     }
 
     function store(Request $request,)

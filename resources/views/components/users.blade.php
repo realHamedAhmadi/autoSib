@@ -1,5 +1,11 @@
-@props(['users'])
-
+@props(['users','careType'=>null])
+@php
+$careChecker=null;
+if ($careType){
+    $careChecker=new \App\Support\CareChecker($careType);
+}
+$autoStatus=\App\Support\AutomationStatuses::class;
+@endphp
 <div class="ui segment">
     <table class="ui celled striped selectable table">
         <thead>
@@ -21,6 +27,17 @@
 
         <tbody>
         @forelse($users as $key=>$user)
+            @php
+            $status=$careChecker?->userStatus($user->nationalId);
+            $color=match ($status){
+                $autoStatus::USER_DONE=>'green',
+                $autoStatus::USER_FAILED=>'red',
+                $autoStatus::USER_PAUSED=>'orange',
+                $autoStatus::USER_RUNNING=>'blue',
+                $autoStatus::USER_PENDING=>'grey',
+                default=>'white'
+            }
+            @endphp
             <tr>
                 <td class="center aligned">
                     <div class="ui checkbox">
@@ -45,7 +62,10 @@
                         <label></label>
                     </div>
                 </td>
-                <td>{{ $user->name }}</td>
+                <td>
+                    <a class="ui {{$color}} empty circular label"></a>
+                    {{ $user->name }}
+                </td>
                 <td>{{ $user->family }}</td>
                 <td>
                     <a href="tel:{{ $user->mobile ?: '-' }}">{{ $user->mobile ?: '-' }}</a>

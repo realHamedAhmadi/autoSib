@@ -46,7 +46,8 @@ class YoungCaresController extends Controller
                 currentPageNumber: $request->page
             )
         );
-        return view('young.index',compact('users'));
+        $careType=CareType::YOUNG_PEOPLE;
+        return view('young.index',compact('users','careType'));
     }
 
     function store(Request $request,)
