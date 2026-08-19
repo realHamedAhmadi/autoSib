@@ -6,6 +6,6 @@ enum MentalScreeningType: string
 {
     case NEGATIVE = 'negative';
     case POSITIVE_ANXIETY = 'anxiety';
-    case POSITIVE_DEPRESSION = 'depression';
+    case POSITIVE_DEPRESSION = 'depress';
 
 }
