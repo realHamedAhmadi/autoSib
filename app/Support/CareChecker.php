@@ -24,7 +24,7 @@ class CareChecker
                 $q->type($this->careType);
             })
             ->latest()->first();
-        if (!$runUser or !$this->service->alreadyTaken($runUser->finished_at)){
+        if (!$runUser || ($runUser->finished_at && !$this->service->alreadyTaken($runUser->finished_at))){
             return 'free';
         }
         return $runUser->status;
