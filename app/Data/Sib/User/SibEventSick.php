@@ -8,14 +8,14 @@ readonly class SibEventSick
     public function __construct(
         public int $userId,
         public Carbon $date,
-        public ?Carbon $dateFinish,
-        public Carbon $dateSeek,
+        public ?Carbon $finishDate,
+        public Carbon $sickDate,
         public int $id,
-        public int $idSeek,
+        public int $sickId,
         public string $name,
         public string $nationalId,
         public string $ownerName,
-        public string $seek
+        public string $sickTitle
     ) {}
 
     /**
@@ -28,14 +28,14 @@ readonly class SibEventSick
         return new self(
             userId: (int) $data['Id_User'],
             date: Carbon::parse($data['Date_']),
-            dateFinish: !empty($data['Date_Finish']) ? Carbon::parse($data['Date_Finish']) : null,
-            dateSeek: Carbon::parse($data['Date_Seek']),
+            finishDate: !empty($data['Date_Finish']) ? Carbon::parse($data['Date_Finish']) : null,
+            sickDate: Carbon::parse($data['Date_Seek']),
             id: (int) $data['Id'],
-            idSeek: (int) $data['Id_Seek'],
+            sickId: (int) $data['Id_Seek'],
             name: $data['Name'],
             nationalId: $data['NationalID'],
             ownerName: $data['OwnerName'],
-            seek: $data['Seek']
+            sickTitle: $data['Seek']
         );
     }
 }

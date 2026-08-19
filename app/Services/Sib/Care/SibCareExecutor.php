@@ -41,7 +41,7 @@ class SibCareExecutor
 
         setCurrentUserToken($token, $adminUserId);
 
-        $userInfo = $this->sibUserService->getInfoByToken($userInfo->userToken, $adminUserId);
+        $userInfo = $this->sibUserService->getFullInfo($userInfo->userToken, $adminUserId);
         if (!$careService->hasCare($userInfo)){
             throw new DoesNotHaveCareException();
         }

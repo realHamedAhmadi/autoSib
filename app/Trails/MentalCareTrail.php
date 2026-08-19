@@ -7,6 +7,7 @@ use App\Data\Sib\User\SibUserInfo;
 use App\Data\User\UserPayload;
 use App\Support\MentalScreeningType;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 trait MentalCareTrail
@@ -30,11 +31,11 @@ trait MentalCareTrail
     {
         $type=null;
         foreach ($userInfo->sicks as $sick){
-            if (Str::contains($sick->sick,MentalScreeningType::POSITIVE_DEPRESSION->value)){
+            if (Str::contains($sick->sickTitle,MentalScreeningType::POSITIVE_DEPRESSION->value,true)){
                 $type=MentalScreeningType::POSITIVE_DEPRESSION;
                 break;
             }
-            if (Str::contains($sick->sick,MentalScreeningType::POSITIVE_ANXIETY->value)){
+            if (Str::contains($sick->sickTitle,MentalScreeningType::POSITIVE_ANXIETY->value,true)){
                 $type=MentalScreeningType::POSITIVE_ANXIETY;
                 break;
             }
@@ -82,8 +83,8 @@ trait MentalCareTrail
     {
         $ranges = match ($type) {
             MentalScreeningType::NEGATIVE => [0,0,0,1,1, 2],
-            MentalScreeningType::POSITIVE_ANXIETY => in_array($questionId, self::ANXIETY_QUESTIONS) ? [3, 4] : [0, 1, 2, 3, 4],
-            MentalScreeningType::POSITIVE_DEPRESSION => in_array($questionId, self::DEPRESSION_QUESTIONS) ? [3, 4] : [0, 1, 2, 3, 4],
+            MentalScreeningType::POSITIVE_ANXIETY => in_array($questionId, self::ANXIETY_QUESTIONS) ? [2,3,3,3,4] : [0,1,1,2,2,2,3,4],
+            MentalScreeningType::POSITIVE_DEPRESSION => in_array($questionId, self::DEPRESSION_QUESTIONS) ? [2,3,3,3,4] : [0,1,1,2,2,2,3,4],
         };
 
         return $ranges[array_rand($ranges)];

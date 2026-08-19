@@ -46,7 +46,7 @@ class ElderlyDepressionCareService extends BaseElderlyCareService
 
         // Detect screening type based on pre-existing conditions/sicknesses
         foreach ($userInfo->sicks as $sick) {
-            if (Str::contains($sick->sick, MentalScreeningType::POSITIVE_DEPRESSION->value)) {
+            if (Str::contains($sick->sickTitle, MentalScreeningType::POSITIVE_DEPRESSION->value,true)) {
                 $type = MentalScreeningType::POSITIVE_DEPRESSION;
                 $this->isSick=true;
                 break;
@@ -99,11 +99,11 @@ class ElderlyDepressionCareService extends BaseElderlyCareService
 
         if ($type === MentalScreeningType::NEGATIVE) {
             // 80% chance of normal (0 points), 20% chance of depressive symptom (1 point)
-            return $rand <= 80 ? 0 : 1;
+            return $rand <= 70 ? 0 : 1;
         }
 
         // 70% chance of depressive symptom (1 point), 30% chance of normal (0 points)
-        return $rand <= 70 ? 1 : 0;
+        return $rand <= 60 ? 1 : 0;
     }
 
     /**

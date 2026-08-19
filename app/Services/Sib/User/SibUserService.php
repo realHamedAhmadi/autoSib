@@ -65,5 +65,19 @@ final class SibUserService
         return SibUserInfo::fromApiResponse($data);
     }
 
+    function getFullInfo(string $userToken,?string $adminUserIdentifier = null):SibUserInfo
+    {
+        $response=$this->client
+            ->request($adminUserIdentifier)
+            ->post("/api/sib/v1/UserFile/EHR",[
+                'userToken'=>$userToken
+            ]);
+
+        $data = $this->client->data($response);
+        $userData=$data['UserInfo'];
+        $userData['EventSicks']=$data['EventSicks'];
+        return SibUserInfo::fromApiResponse($userData);
+    }
+
 
 }
