@@ -266,6 +266,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             $userInfo,
             $payload,
         );
+        Log::info($answers);
 
         $hash = $this->sibCareService->saveFrom(
             $careCode,
@@ -347,7 +348,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         int $adminUserId,
     ): CompletedCareData {
         foreach ($completedVisits as $visit) {
-            if ($visit->idChildIndex === $careCode) {
+            if ((string)$visit->idChildIndex === $careCode) {
                 return $this->sibCareService->completedCareData(
                     $visit->basicVisitToken->token,
                     $adminUserId,
