@@ -18,7 +18,7 @@ final class SibHttpClient
         $headers = [
             'Accept-Language' => 'fa-IR',
             'Origin' => $baseUrl,
-            'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:150.0) Gecko/20100101 Firefox/150.0',
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
             'Connection' => 'keep-alive',
         ];
 
