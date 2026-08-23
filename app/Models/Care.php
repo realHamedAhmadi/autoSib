@@ -12,7 +12,7 @@ class Care extends Model
     use HasFactory;
 
     protected $fillable=[
-        'type','code','title','service'
+        'id','type','code','title','service'
     ];
 
     protected $casts = [

@@ -1,19 +1,40 @@
 <?php
 
-namespace Database\Seeders;
-
 use App\Models\Care;
 use App\Support\CareServiceType;
 use App\Support\CareType;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-class MiddleAgedCareSeeder extends Seeder
+return new class extends Migration
 {
+    protected int $id=26;
     /**
-     * Run the database seeds.
+     * Run the migrations.
      */
-    public function run(): void
+    public function up(): void
+    {
+        DB::beginTransaction();
+        try {
+            $this->createData();
+            DB::commit();
+        }catch (Throwable $e){
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Care::type(CareType::MIDDLE_AGED)->delete();
+    }
+
+    protected function createData()
     {
         $title='ارزيابي فعاليت بدني میانسالان';
         $code=6786;
@@ -53,8 +74,11 @@ class MiddleAgedCareSeeder extends Seeder
         if (!$this->careExists($code)){
             Care::create(array_merge(
                 compact('code','title','service')
-                ,['type'=>CareType::MIDDLE_AGED->name]
+                ,[
+                    'id'=>$this->id++,
+                    'type'=>CareType::MIDDLE_AGED->name
+                ]
             ));
         }
     }
-}
+};

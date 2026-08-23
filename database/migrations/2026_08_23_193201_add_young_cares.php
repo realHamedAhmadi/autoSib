@@ -1,19 +1,40 @@
 <?php
 
-namespace Database\Seeders;
-
 use App\Models\Care;
 use App\Support\CareServiceType;
 use App\Support\CareType;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
-class YoungCareSeeder extends Seeder
+return new class extends Migration
 {
+    protected int $id=11;
     /**
-     * Run the database seeds.
+     * Run the migrations.
      */
-    public function run(): void
+    public function up(): void
+    {
+       DB::beginTransaction();
+        try {
+            $this->createData();
+            DB::commit();
+        }catch (Throwable $e){
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Care::type(CareType::YOUNG_PEOPLE)->delete();
+    }
+
+    protected function createData()
     {
         $title='ارزيابي فعاليت بدني جوانان';
         $code=6786;
@@ -47,9 +68,8 @@ class YoungCareSeeder extends Seeder
         $this->createCare($code,$title,CareServiceType::YOUNG_DENTAL_HEALTH->value);
 
         $title='شناسایی افراد مشکوک به آسم جوانان';
-        $code=24339;
+        $code=24338;
         $this->createCare($code,$title,CareServiceType::YOUNG_ASTHMA->value);
-
     }
 
     protected function careExists($code)
@@ -63,8 +83,11 @@ class YoungCareSeeder extends Seeder
         if (!$this->careExists($code)){
             Care::create(array_merge(
                 compact('code','title','service')
-                ,['type'=>CareType::YOUNG_PEOPLE->name]
+                ,[
+                    'id'=>$this->id++,
+                    'type'=>CareType::YOUNG_PEOPLE->name
+                ]
             ));
         }
     }
-}
+};
