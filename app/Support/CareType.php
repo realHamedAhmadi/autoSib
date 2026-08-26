@@ -10,6 +10,10 @@ enum CareType: string
     case MIDDLE_AGED='میانسالان';
     case THE_ELDERLY='سالمندان';
     case RISK_ASSESSMENT='خطر سنجی';
+    case MENTAL='روان, اجتماعی و مواد';
+    case TRADITIONAL_MEDICINE='طب سنتی';
+    case TEENAGERS='نوجوانان';
+    case DART='ارزيابي آمادگي خانوار در برابر بلايا';
 
     public static function all(): array
     {

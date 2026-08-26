@@ -44,6 +44,8 @@ class ProcessAutomationRunUserJob implements ShouldQueue
      */
     private int $sleepTime = 15;
 
+    private bool $isSlept=true;
+
     public int $tries = 1;
 
     public int $timeout = 1800;
@@ -122,7 +124,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
 
             $this->processRunUser($runUser);
 
-            sleep($this->sleepTime);
+            sleep(20);
         }
     }
 
@@ -175,7 +177,10 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             );
 
             $this->refreshProgress($runUser);
-            sleep($this->sleepTime);
+            if ($this->isSlept){
+                sleep($this->sleepTime);
+            }
+            $this->isSlept=true;
         }
 
         $this->markRunUserAsDone($runUser);
@@ -385,7 +390,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         $isSkippable = $exception instanceof CareAlreadyTakenException
             || $exception instanceof IgnoreCareException
             || $exception instanceof DoesNotHaveCareException;
-
+        $this->isSlept=!$isSkippable;
         $status = $isSkippable
             ? AutomationStatuses::CARE_SKIPPED
             : AutomationStatuses::CARE_FAILED;

@@ -51,6 +51,15 @@
     <span>مراقبت سالمندان</span>
 </a>
 @endcan
+@can('allowedCare',\App\Support\CareType::MENTAL)
+<a
+    href="{{route('mental.index')}}"
+    class="item menu-item"
+>
+    <i class="user icon"></i>
+    <span>مراقبت روان, اجتماعی و مواد</span>
+</a>
+@endcan
 @endcan
 @can('admin')
 <a

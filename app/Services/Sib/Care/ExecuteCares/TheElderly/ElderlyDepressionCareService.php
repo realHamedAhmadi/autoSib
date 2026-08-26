@@ -40,6 +40,11 @@ class ElderlyDepressionCareService extends BaseElderlyCareService
 
     protected bool $isSick=false;
 
+    public function hasCare(SibUserInfo $userInfo): bool
+    {
+        return $userInfo->birthDate->age>=60;
+    }
+
     public function firstForm(CompletedCareData $olderCareDate, SibUserInfo $userInfo, ?UserPayload $payload): array
     {
         $type = null;

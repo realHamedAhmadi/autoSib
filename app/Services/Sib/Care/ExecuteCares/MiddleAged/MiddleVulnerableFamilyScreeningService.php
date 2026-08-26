@@ -13,6 +13,7 @@ class MiddleVulnerableFamilyScreeningService extends BaseMiddleAgedCareService
     use VulnerableFamilyTrail;
     public function hasCare(SibUserInfo $userInfo): bool
     {
-        return $userInfo->gender==GenderStatus::WOMAN->value && $userInfo->maritalStatus==MaritalStatus::MARRIED->value;
+        return ($userInfo->gender==GenderStatus::WOMAN->value && $userInfo->maritalStatus==MaritalStatus::MARRIED->value)
+               && ($userInfo->birthDate->age>=30 && $userInfo->birthDate->age<60);
     }
 }

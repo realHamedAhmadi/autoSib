@@ -23,6 +23,14 @@ class Care extends Model
     {
         return $q->where('type',$type->name);
     }
+    function scopeTypeIn($q,array $types)
+    {
+        $t=[];
+        foreach ($types as $type){
+            $t[]=$type->name;
+        }
+        return $q->whereIn('type',$t);
+    }
 
     function automationCares()
     {

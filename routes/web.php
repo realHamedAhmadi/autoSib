@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiabeticController;
 use App\Http\Controllers\FamilyEnvHealthController;
 use App\Http\Controllers\HyperTensionController;
+use App\Http\Controllers\MentalCaresController;
 use App\Http\Controllers\MiddleAgedController;
 use App\Http\Controllers\RetryAutomationRunController;
 use App\Http\Controllers\RoleController;
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function (){
    Route::resource('young',YoungCaresController::class);
    Route::resource('middle-aged',MiddleAgedController::class);
    Route::resource('elderly',TheElderlyController::class);
+   Route::resource('mental',MentalCaresController::class);
 
     Route::post('/automation/runs/{run}/retry', [RetryAutomationRunController::class, 'retry'])
         ->name('automation.runs.retry');
