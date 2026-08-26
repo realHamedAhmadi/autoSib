@@ -523,7 +523,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
     {
         PendingAutomationRun::firstOrCreate([
             'user_id' => $adminUserId,
-            'run_id' => $this->run->id,
+            'automation_run_id' => $this->run->id,
         ]);
     }
 
