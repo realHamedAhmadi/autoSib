@@ -18,9 +18,21 @@ class AutomationService
 {
     public function run(array $users, CareType $careType)
     {
-        $run = DB::transaction(function () use ($users, $careType) {
-            $totalUsers = count($users);
-            $totalCares = collect($users)->sum(fn ($user) => Care::type($careType)->count());
+        $totalUsers = count($users);
+        $todayUserCare=$this->todayUserCare();
+        $todayUserCareCount=count($todayUserCare);
+        $currentUser=getCurrentUser();
+        $maxUserCount=$currentUser?->max_user_care;
+        $run=new \stdClass();
+        $run->id=-1;
+        if (!is_null($maxUserCount)){
+            if ($todayUserCareCount>=$maxUserCount){
+                return $run;
+            }
+            $totalUsers=min($maxUserCount-$todayUserCareCount,$totalUsers);
+        }
+        $run = DB::transaction(function () use ($users, $careType,$totalUsers,$todayUserCare) {
+            $totalCares = $totalUsers * Care::type($careType)->count();
 
             $run = AutomationRun::create([
                 'user_id' => getCurrentUserId(),
@@ -34,8 +46,15 @@ class AutomationService
                     'care_type' => $careType,
                 ],
             ]);
-
+            $userCounter=0;
             foreach ($users as $user) {
+                if(in_array($user['id'],$todayUserCare)){
+                    continue;
+                }
+                $userCounter++;
+                if ($userCounter>$totalUsers){
+                    break;
+                }
                 $runUser = AutomationRunUser::create([
                     'automation_run_id' => $run->id,
                     'sib_user_id' => $user['id'],
@@ -153,5 +172,13 @@ class AutomationService
         } finally {
             $lock->release();
         }
+    }
+
+    protected function todayUserCare()
+    {
+        return AutomationRunUser::distinct('sib_user_id')
+        ->whereHas('run',function ($q){
+            $q->where('user_id',getCurrentUserId());
+        })->whereDate('created_at',date('Y-m-d'))->pluck('sib_user_id')->toArray();
     }
 }

@@ -26,6 +26,13 @@
                     <div class="ui pointing red basic label">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="field">
+                    <label>کاربر در هر روز حداکثر چند نفر را می تواند مراقبت بزند؟(خالی: به دلخواه)</label>
+                    <input type="number" name="max_user_care" value="{{ old('max_user_care',$user->max_user_care) }}" placeholder="حداکثر کاربر سیب برای مراقبت">
+                    @error('max_user_care')
+                    <div class="ui pointing red basic label">{{ $message }}</div>
+                    @enderror
+                </div>
                 @can('owner')
                     @if(!$user->isOwner())
                 <div class="inline field">

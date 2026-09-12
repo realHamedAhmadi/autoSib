@@ -6,6 +6,8 @@ use App\Models\AutomationRunUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 use Morilog\Jalali\Jalalian;
 
 class AutomationMonitoringController extends Controller
@@ -31,8 +33,13 @@ class AutomationMonitoringController extends Controller
     /**
      * Show details of a specific automation run.
      */
-    public function show(AutomationRun $run): View
+    public function show($id)
     {
+        Log::info($id);
+        if($id=='-1'){
+            return redirect()->route('dashboard');
+        }
+        $run=AutomationRun::findOrFail($id);
         if ($run->user_id != Auth::id() && !Auth::user()?->isOwner()){
             abort(404);
         }

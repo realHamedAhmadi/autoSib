@@ -29,6 +29,7 @@ class User extends Authenticatable
         'unit_name',
         'token',
         'token_expires_at',
+        'max_user_care',
     ];
 
     /**

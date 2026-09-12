@@ -44,6 +44,7 @@ class UserController extends Controller
         $validated=$request->validate([
             'name'=>'nullable|string|min:3|max:32',
             'national_code'=>'required|numeric|digits:10|unique:users,national_code',
+            'max_user_care'=>'nullable|numeric',
             'is_admin'=>'nullable|in:0,1',
             'allowed_cares'=>'nullable|array',
             'allowed_cares.*'=>['required', Rule::in(array_column(CareType::cases(), 'name'))],
@@ -80,6 +81,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'nullable|string|min:3|max:32',
             'national_code'=>'required|numeric|digits:10|unique:users,national_code,'.$user->id,
+            'max_user_care'=>'nullable|numeric',
             'is_admin' => 'nullable|in:0,1',
             'is_active' => 'nullable|in:0,1',
             'allowed_cares'=>'nullable|array',

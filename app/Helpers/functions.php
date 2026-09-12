@@ -1,4 +1,6 @@
 <?php
+
+use App\Models\AutomationRunUser;
 use Illuminate\Support\Facades\Auth;
 use App\Data\Sib\Auth\AuthToken;
 
@@ -59,4 +61,20 @@ function getCurrentUserId()
 function arrayRandom(array $array)
 {
     return $array[array_rand($array)];
+}
+
+function getRemainingUserCareCount()
+{
+    $todayUserCount=AutomationRunUser::distinct('sib_user_id')
+    ->whereHas('run',function ($q){
+        $q->where('user_id',getCurrentUserId());
+    })->whereDate('created_at',date('Y-m-d'))->count();
+    $maxUserCount=getCurrentUser()?->max_user_care;
+    if (!is_null($maxUserCount)){
+        if ($todayUserCount>=$maxUserCount){
+            return 0;
+        }
+        return $maxUserCount-$todayUserCount;
+    }
+    return null;
 }
