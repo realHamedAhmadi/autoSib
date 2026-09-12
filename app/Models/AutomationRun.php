@@ -33,6 +33,11 @@ class AutomationRun extends Model
         return $user->isOwner() ? $query : $query->where('user_id', $user->id);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function users(): HasMany
     {
         return $this->hasMany(AutomationRunUser::class);

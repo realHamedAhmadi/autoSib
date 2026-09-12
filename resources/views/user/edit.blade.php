@@ -33,6 +33,13 @@
                     <div class="ui pointing red basic label">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="field">
+                    <label>فاصله زمانی بین مراقبت ها (ثانیه)</label>
+                    <input type="number" name="care_sleep_time" value="{{ old('care_sleep_time',$user->care_sleep_time) }}" min="15" placeholder="فاصله زمانی بین مراقبت ها">
+                    @error('care_sleep_time')
+                    <div class="ui pointing red basic label">{{ $message }}</div>
+                    @enderror
+                </div>
                 @can('owner')
                     @if(!$user->isOwner())
                 <div class="inline field">

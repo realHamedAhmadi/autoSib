@@ -30,6 +30,7 @@ class User extends Authenticatable
         'token',
         'token_expires_at',
         'max_user_care',
+        'care_sleep_time',
     ];
 
     /**

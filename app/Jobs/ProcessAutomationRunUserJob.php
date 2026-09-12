@@ -57,6 +57,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
     public function __construct(
         protected readonly AutomationRun $run,
     ) {
+        $this->sleepTime=(int)$run->user->care_sleep_time;
     }
 
     public function handle(
@@ -79,6 +80,15 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         $adminUserId = (int) $this->run->user_id;
         $lock = Cache::lock($this->lockKey($adminUserId), self::LOCK_TTL);
         $runningFlagKey = $this->runningFlagKey($adminUserId);
+
+        // If the crash-flag exists, it means the previous run crashed without releasing the lock.
+        // We force release the lock to allow this new attempt to run.
+        if (Cache::has($runningFlagKey)) {
+            Log::warning('Recovering from a previous job crash. Force releasing lock.', [
+                'user_id' => $adminUserId,
+            ]);
+            $lock->forceRelease();
+        }
 
         if (! $lock->get()) {
             $this->queueAsPending($adminUserId);
@@ -178,7 +188,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
 
             $this->refreshProgress($runUser);
             if ($this->isSlept){
-                sleep($this->sleepTime);
+                sleep($this->getSleepTime());
             }
             $this->isSlept=true;
         }
@@ -271,7 +281,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             $userInfo,
             $payload,
         );
-        Log::info($answers);
+        //Log::info($answers);
 
         $hash = $this->sibCareService->saveFrom(
             $careCode,
@@ -581,5 +591,13 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             ]);
 
         $this->dispatchPendingRuns((int) $this->run->user_id);
+    }
+
+    protected function getSleepTime()
+    {
+        if ($this->sleepTime<=20){
+            return $this->sleepTime;
+        }
+        return $this->sleepTime + (rand(0,$this->sleepTime/5)*arrayRandom([1,-1]));
     }
 }
