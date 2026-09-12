@@ -10,69 +10,69 @@ use App\Models\Care;
 use App\Support\AutomationStatuses;
 use App\Support\CareType;
 use App\Support\RandomNumberPicker;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AutomationService
 {
+    /**
+     * Start a new automation run for given users and care type.
+     */
     public function run(array $users, CareType $careType)
     {
-        $totalUsers = count($users);
-        $todayUserCare=$this->todayUserCare();
-        $todayUserCareCount=count($todayUserCare);
-        $currentUser=getCurrentUser();
-        $maxUserCount=$currentUser?->max_user_care;
         $run=new \stdClass();
         $run->id=-1;
-        if (!is_null($maxUserCount)){
-            if ($todayUserCareCount>=$maxUserCount){
-                return $run;
-            }
-            $totalUsers=min($maxUserCount-$todayUserCareCount,$totalUsers);
-        }
-        $run = DB::transaction(function () use ($users, $careType,$totalUsers,$todayUserCare) {
-            $totalCares = $totalUsers * Care::type($careType)->count();
+        $eligibleUsers = $this->filterEligibleUsers($users);
 
+        if (empty($eligibleUsers)) {
+            return $run;
+        }
+
+        // Cache cares list and count in memory to avoid repeated queries inside loops
+        $cares = Care::type($careType)->get();
+        $careCount = $cares->count();
+
+        if ($careCount === 0) {
+            return $run;
+        }
+
+        $totalUsers = count($eligibleUsers);
+        $totalCares = $totalUsers * $careCount;
+
+        $run = DB::transaction(function () use ($eligibleUsers, $careType, $cares, $totalUsers, $totalCares, $careCount) {
             $run = AutomationRun::create([
-                'user_id' => getCurrentUserId(),
-                'status' => AutomationStatuses::RUN_PENDING,
-                'total_users' => $totalUsers,
+                'user_id'         => getCurrentUserId(),
+                'status'          => AutomationStatuses::RUN_PENDING,
+                'total_users'     => $totalUsers,
                 'processed_users' => 0,
-                'total_cares' => $totalCares,
+                'total_cares'     => $totalCares,
                 'processed_cares' => 0,
-                'input' => [
-                    /*'users' => $users,*/
+                'input'           => [
                     'care_type' => $careType,
                 ],
             ]);
-            $userCounter=0;
-            foreach ($users as $user) {
-                if(in_array($user['id'],$todayUserCare)){
-                    continue;
-                }
-                $userCounter++;
-                if ($userCounter>$totalUsers){
-                    break;
-                }
+
+            foreach ($eligibleUsers as $user) {
                 $runUser = AutomationRunUser::create([
                     'automation_run_id' => $run->id,
-                    'sib_user_id' => $user['id'],
-                    'status' => AutomationStatuses::USER_PENDING,
-                    'total_cares' => Care::type($careType)->count(),
-                    'processed_cares' => 0,
-                    'payload' => $user,
+                    'sib_user_id'       => $user['id'],
+                    'status'            => AutomationStatuses::USER_PENDING,
+                    'total_cares'       => $careCount,
+                    'processed_cares'   => 0,
+                    'payload'           => $user,
                 ]);
 
-                $picker=new RandomNumberPicker(Care::type($careType)->count());
+                $picker = new RandomNumberPicker($careCount);
 
-                foreach (Care::type($careType)->get() ?? [] as  $care) {
+                foreach ($cares as $care) {
                     AutomationRunUserCare::create([
                         'automation_run_user_id' => $runUser->id,
-                        'care_id' => $care->id,
-                        'sort_order' => $picker->next(),
-                        'status' => AutomationStatuses::CARE_PENDING,
-                        'payload' => $careData['payload'] ?? null,
+                        'care_id'                => $care->id,
+                        'sort_order'             => $picker->next(),
+                        'status'                 => AutomationStatuses::CARE_PENDING,
+                        'payload'                => null,
                     ]);
                 }
             }
@@ -85,6 +85,9 @@ class AutomationService
         return $run;
     }
 
+    /**
+     * Retry an existing failed or cancelled automation run.
+     */
     public function retry(AutomationRun $run): AutomationRun
     {
         $retryableStatuses = [
@@ -101,7 +104,7 @@ class AutomationService
 
         $lock = Cache::lock("automation-run-retry:{$run->id}", 30);
 
-        if (! $lock->get()) {
+        if (!$lock->get()) {
             throw ValidationException::withMessages([
                 'run' => 'This run is already being retried.',
             ]);
@@ -117,28 +120,28 @@ class AutomationService
                     ]);
                 }
 
-                $runUserIds = AutomationRunUser::query()
+                $failedUserIds = AutomationRunUser::query()
                     ->where('automation_run_id', $run->id)
                     ->where('status', AutomationStatuses::USER_FAILED)
                     ->pluck('id');
 
                 AutomationRunUser::query()
-                    ->whereIn('id', $runUserIds)
+                    ->whereIn('id', $failedUserIds)
                     ->update([
-                        'status' => AutomationStatuses::USER_PENDING,
+                        'status'          => AutomationStatuses::USER_PENDING,
                         'processed_cares' => 0,
-                        'started_at' => null,
-                        'finished_at' => null,
-                        'error_message' => null,
+                        'started_at'      => null,
+                        'finished_at'     => null,
+                        'error_message'   => null,
                     ]);
 
                 AutomationRunUserCare::query()
-                    ->whereIn('automation_run_user_id', $runUserIds)
+                    ->whereIn('automation_run_user_id', $failedUserIds)
                     ->where('status', AutomationStatuses::CARE_FAILED)
                     ->update([
-                        'status' => AutomationStatuses::CARE_PENDING,
-                        'started_at' => null,
-                        'finished_at' => null,
+                        'status'        => AutomationStatuses::CARE_PENDING,
+                        'started_at'    => null,
+                        'finished_at'   => null,
                         'error_message' => null,
                     ]);
 
@@ -157,12 +160,12 @@ class AutomationService
                     ->count();
 
                 $run->update([
-                    'status' => AutomationStatuses::RUN_PENDING,
+                    'status'          => AutomationStatuses::RUN_PENDING,
                     'processed_users' => $processedUsers,
                     'processed_cares' => $processedCares,
-                    'started_at' => null,
-                    'finished_at' => null,
-                    'error_message' => null,
+                    'started_at'      => null,
+                    'finished_at'     => null,
+                    'error_message'   => null,
                 ]);
             });
 
@@ -174,11 +177,52 @@ class AutomationService
         }
     }
 
-    protected function todayUserCare()
+    /**
+     * Filter given users by today's duplicate exclusion and user quota limit.
+     */
+    protected function filterEligibleUsers(array $users): array
     {
-        return AutomationRunUser::distinct('sib_user_id')
-        ->whereHas('run',function ($q){
-            $q->where('user_id',getCurrentUserId());
-        })->whereDate('created_at',date('Y-m-d'))->pluck('sib_user_id')->toArray();
+        $todayProcessedSibUserIds = $this->getTodayProcessedSibUserIds();
+        $todayProcessedCount = count($todayProcessedSibUserIds);
+
+        $currentUser = getCurrentUser();
+        $maxUserQuota = $currentUser?->max_user_care;
+
+        // Check if daily quota is already exhausted
+        if (!is_null($maxUserQuota) && $todayProcessedCount >= $maxUserQuota) {
+            return [];
+        }
+
+        // Exclude users already cared for today
+        $freshUsers = array_values(array_filter($users, function (array $user) use ($todayProcessedSibUserIds) {
+            return !in_array($user['id'], $todayProcessedSibUserIds, true);
+        }));
+
+        if (empty($freshUsers)) {
+            return [];
+        }
+
+        // Slice by remaining quota if configured
+        if (!is_null($maxUserQuota)) {
+            $remainingAllowed = max(0, $maxUserQuota - $todayProcessedCount);
+            return array_slice($freshUsers, 0, $remainingAllowed);
+        }
+
+        return $freshUsers;
+    }
+
+    /**
+     * Retrieve list of SIB user IDs processed today by current authenticated user.
+     */
+    protected function getTodayProcessedSibUserIds(): array
+    {
+        return AutomationRunUser::query()
+            ->whereHas('run', function ($query) {
+                $query->where('user_id', getCurrentUserId());
+            })
+            ->whereDate('created_at', now()->toDateString())
+            ->distinct()
+            ->pluck('sib_user_id')
+            ->toArray();
     }
 }
