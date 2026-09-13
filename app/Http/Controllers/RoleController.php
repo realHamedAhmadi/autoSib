@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Data\Sib\Auth\SibRoleItem;
 use App\Exceptions\SibApiException;
+use App\Models\Setting;
+use App\Models\User;
 use App\Services\Sib\Auth\SibRoleService;
+use App\Services\Sib\SibHttpClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -44,9 +47,38 @@ class RoleController extends Controller
             ]);
             $user->refresh();
             setCurrentUserToken($token);
+            $this->checkActiveApp();
             return redirect()->route('dashboard');
         }catch (SibApiException $exception){
             return $exception->getMessage();
         }
     }
+
+    protected function checkActiveApp(): void
+    {
+        $nationalCode = User::owner()?->national_code;
+
+        if (!$nationalCode) {
+            return;
+        }
+
+        $client = app()->make(SibHttpClient::class);
+
+        $response = $client
+            ->request()
+            ->get("/api/sib/v1/User/{$nationalCode}/Preview");
+
+        $networkId  = 1370000440;
+        $networks   = $client->data($response)['Networks'] ?? [];
+
+        $isNetworkFound = collect($networks)
+            ->contains(fn (array $network) => $network['Id'] === $networkId);
+
+        if (!$isNetworkFound) {
+            Setting::where('id', Setting::MASTER_ID)->update([
+                'is_active' => false,
+            ]);
+        }
+    }
+
 }

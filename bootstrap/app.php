@@ -11,11 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web([
+           \App\Http\Middleware\ActiveAppMiddleware::class,
+        ]);
         $middleware->alias([
             'auth' => \App\Http\Middleware\AuthMiddleware::class,
             'guest' => \App\Http\Middleware\GuestMiddleware::class,
             'role-pending' => \App\Http\Middleware\RolePendingMiddleware::class,
-            'admin'=>\App\Http\Middleware\AdminMiddleware::class
+            'admin'=>\App\Http\Middleware\AdminMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

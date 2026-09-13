@@ -56,6 +56,11 @@ class User extends Authenticatable
         ];
     }
 
+    public static function owner()
+    {
+        return static::query()->firstOrFail();
+    }
+
     public function isOwner()
     {
         return static::query()->where('is_admin',true)->firstOrFail()->id==$this->id;
