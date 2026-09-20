@@ -95,7 +95,8 @@ if [ "$IS_TERMUX" -eq 1 ]; then
         postgresql \
         git \
         curl \
-        unzip
+        unzip \
+        termux-tools
 
     # Initialize DB if needed
     if [ ! -d "$PREFIX/var/lib/postgresql" ]; then
@@ -135,7 +136,8 @@ else
         php-bcmath \
         php-intl \
         postgresql \
-        postgresql-contrib
+        postgresql-contrib \
+        xdg-utils
 
     # Install Composer if missing
     if ! command -v composer >/dev/null 2>&1; then
