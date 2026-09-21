@@ -80,7 +80,13 @@ echo "[INFO] Re-optimizing Laravel caches..."
 php artisan optimize
 
 # ----------------------------------------------------
-# 5. Laravel Web Server (artisan serve)
+# 5. Laravel Migration
+# ----------------------------------------------------
+echo "[INFO] Running artisan migrate..."
+php artisan migrate --force || echo "Migration skipped or encountered an issue."
+
+# ----------------------------------------------------
+# 6. Laravel Web Server (artisan serve)
 # ----------------------------------------------------
 if pgrep -f "artisan serve" > /dev/null; then
     echo "[INFO] Laravel server is already running."
@@ -90,7 +96,7 @@ else
 fi
 
 # ----------------------------------------------------
-# 6. Laravel Queue Worker (artisan queue:work)
+# 7. Laravel Queue Worker (artisan queue:work)
 # ----------------------------------------------------
 if pgrep -f "artisan queue:work" > /dev/null; then
     echo "[INFO] Laravel queue worker is already running."
@@ -102,7 +108,7 @@ fi
 echo "[SUCCESS] All services verified."
 
 # ----------------------------------------------------
-# 7. Open Default Browser (Conditional)
+# 8. Open Default Browser (Conditional)
 # ----------------------------------------------------
 if [ -f "$BROWSER_FLAG_FILE" ]; then
     echo "[INFO] Auto-open browser is enabled. Launching..."
