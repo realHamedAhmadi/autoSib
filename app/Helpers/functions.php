@@ -65,10 +65,20 @@ function arrayRandom(array $array)
 
 function getRemainingUserCareCount()
 {
-    $todayUserCount=AutomationRunUser::distinct('sib_user_id')
-    ->whereHas('run',function ($q){
-        $q->where('user_id',getCurrentUserId());
-    })->whereDate('created_at',date('Y-m-d'))->count();
+    $todayUserCount= AutomationRunUser::query()
+        // Join intermediate table (automation_run_user_cares)
+        ->join('automation_run_user_cares', 'automation_run_users.id', '=', 'automation_run_user_cares.automation_run_user_id')
+        // Join cares table to access care type
+        ->join('cares', 'automation_run_user_cares.care_id', '=', 'cares.id')
+        ->whereHas('run', function ($query) {
+            $query->where('user_id', getCurrentUserId());
+        })
+        ->whereDate('automation_run_users.created_at', now()->toDateString())
+        ->select([
+            'automation_run_users.sib_user_id',
+            'cares.type as care_type',
+        ])
+        ->distinct()->count();
     $maxUserCount=getCurrentUser()?->max_user_care;
     if (!is_null($maxUserCount)){
         if ($todayUserCount>=$maxUserCount){

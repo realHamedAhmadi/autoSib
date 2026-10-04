@@ -24,7 +24,7 @@ class AutomationService
     {
         $run=new \stdClass();
         $run->id=-1;
-        $eligibleUsers = $this->filterEligibleUsers($users);
+        $eligibleUsers = $this->filterEligibleUsers($users,$careType);
 
         if (empty($eligibleUsers)) {
             return $run;
@@ -178,31 +178,45 @@ class AutomationService
     }
 
     /**
-     * Filter given users by today's duplicate exclusion and user quota limit.
+     * Filter given users by today's duplicate exclusion for specific care type and overall user quota limit.
      */
-    protected function filterEligibleUsers(array $users): array
+    protected function filterEligibleUsers(array $users, CareType $careType): array
     {
-        $todayProcessedSibUserIds = $this->getTodayProcessedSibUserIds();
-        $todayProcessedCount = count($todayProcessedSibUserIds);
+        // Retrieve all processed care records for today
+        $todayProcessedRecords = $this->getTodayProcessedSibUsers();
+
+        // Total processed cares today across all types (used for overall daily quota)
+        $todayProcessedCount = $todayProcessedRecords->count();
 
         $currentUser = getCurrentUser();
         $maxUserQuota = $currentUser?->max_user_care;
 
-        // Check if daily quota is already exhausted
+        // Check if total daily quota is already exhausted
         if (!is_null($maxUserQuota) && $todayProcessedCount >= $maxUserQuota) {
             return [];
         }
 
-        // Exclude users already cared for today
-        $freshUsers = array_values(array_filter($users, function (array $user) use ($todayProcessedSibUserIds) {
-            return !in_array($user['id'], $todayProcessedSibUserIds, true);
+        // Extract the raw value of the care type argument
+        $careTypeName = $careType->name;
+
+        // Build lookup set of sib_user_ids that specifically received THIS care_type today
+        $processedForThisCareTypeLookup = $todayProcessedRecords
+            ->where('care_type', $careTypeName)
+            ->pluck('sib_user_id')
+            ->flip()
+            ->all();
+
+        // Exclude user only if they have already received THIS specific care_type today
+        // (If the user received a different care_type earlier, they will NOT be excluded)
+        $freshUsers = array_values(array_filter($users, function (array $user) use ($processedForThisCareTypeLookup) {
+            return !isset($processedForThisCareTypeLookup[$user['id']]);
         }));
 
         if (empty($freshUsers)) {
             return [];
         }
 
-        // Slice by remaining quota if configured
+        // Slice by remaining total quota if configured
         if (!is_null($maxUserQuota)) {
             $remainingAllowed = max(0, $maxUserQuota - $todayProcessedCount);
             return array_slice($freshUsers, 0, $remainingAllowed);
@@ -212,17 +226,29 @@ class AutomationService
     }
 
     /**
-     * Retrieve list of SIB user IDs processed today by current authenticated user.
+     * Retrieve list of all unique (sib_user_id, care_type) pairs processed today by current authenticated user.
      */
-    protected function getTodayProcessedSibUserIds(): array
+    protected function getTodayProcessedSibUsers()
     {
         return AutomationRunUser::query()
+            // Join intermediate table (automation_run_user_cares)
+            ->join('automation_run_user_cares', 'automation_run_users.id', '=', 'automation_run_user_cares.automation_run_user_id')
+            // Join cares table to access care type
+            ->join('cares', 'automation_run_user_cares.care_id', '=', 'cares.id')
+            // Filter by run owner
             ->whereHas('run', function ($query) {
                 $query->where('user_id', getCurrentUserId());
             })
-            ->whereDate('created_at', now()->toDateString())
+            // Filter by creation date
+            ->whereDate('automation_run_users.created_at', now()->toDateString())
+            // Select required fields and alias cares.type to care_type
+            ->select([
+                'automation_run_users.sib_user_id',
+                'cares.type as care_type',
+            ])
+            // Ensure unique pairs of sib_user_id and care_type
             ->distinct()
-            ->pluck('sib_user_id')
-            ->toArray();
+            ->get();
     }
+
 }
