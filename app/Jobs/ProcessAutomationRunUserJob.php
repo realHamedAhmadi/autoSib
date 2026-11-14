@@ -540,11 +540,14 @@ class ProcessAutomationRunUserJob implements ShouldQueue
     private function dispatchPendingRuns(int $userId): void
     {
         PendingAutomationRun::query()
+            ->with('run')
             ->where('user_id', $userId)
             ->orderBy('id')
             ->get()
             ->each(function (PendingAutomationRun $pendingRun): void {
-                self::dispatch($pendingRun->run);
+                if ($pendingRun->run){
+                    self::dispatch($pendingRun->run);
+                }
                 $pendingRun->delete();
             });
     }
