@@ -260,7 +260,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         UserPayload $payload,
         int $adminUserId,
     ): void {
-        $careIndexItem = $this->childCareIndexService->getHashFrom(
+        $careIndexItem = $this->childCareIndexService->getHashForm(
             $careCode,
             $adminUserId,
         );
@@ -346,7 +346,7 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         ) {
             throw new CareAlreadyTakenException();
         }
-        $careIndexItem = $this->childCareIndexService->getHashFrom(
+        $careIndexItem = $this->childCareIndexService->getHashForm(
             $runUserCare->care->code,
             $adminUserId,
         );

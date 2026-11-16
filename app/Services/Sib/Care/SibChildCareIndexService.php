@@ -56,7 +56,7 @@ final class SibChildCareIndexService
         );
     }
 
-    public function getHashFrom(int $formId,?string $adminUserIdentifier = null):ChildCareIndexItem | null
+    public function getHashForm(int $formId,?string $adminUserIdentifier = null):ChildCareIndexItem | null
     {
         $careIndexes=$this->listCompleted($adminUserIdentifier);
         foreach ($careIndexes as $index){
