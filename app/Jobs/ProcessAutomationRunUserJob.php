@@ -160,7 +160,10 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             $adminUserId,
         );
 
-        setCurrentUserToken($token, $adminUserId);
+        Cache::put(SibUserService::getServiceRecipientTokenKey($adminUserId),$token->token,max(
+            0,
+            now()->diffInSeconds($token->expiresAt)
+        ));
 
         $userInfo = $this->sibUserService->getFullInfo(
             $userInfo->userToken,
@@ -343,7 +346,6 @@ class ProcessAutomationRunUserJob implements ShouldQueue
         ) {
             throw new CareAlreadyTakenException();
         }
-
         $careIndexItem = $this->childCareIndexService->getHashFrom(
             $runUserCare->care->code,
             $adminUserId,
@@ -406,14 +408,23 @@ class ProcessAutomationRunUserJob implements ShouldQueue
             : AutomationStatuses::CARE_FAILED;
 
         if (! $isSkippable) {
-            Log::error('Care execution failed.', [
-                'run_id' => $runUser->automation_run_id,
-                'run_user_id' => $runUser->id,
-                'sib_user_id' => $runUser->sib_user_id,
-                'care_id' => $runUserCare->id,
-                'exception' => $exception::class,
-                'message' => $exception->getMessage(),
-            ]);
+            $trace = sprintf(
+                "Exception: %s\nMessage: %s\nThrown in: %s:%d\n\nStack trace:\n%s",
+                $exception::class,
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine(),
+                $exception->getTraceAsString(),
+            );
+
+            Log::error(
+                "Care execution failed.\n"
+                . "Run ID: {$runUser->automation_run_id}\n"
+                . "Run User ID: {$runUser->id}\n"
+                . "SIB User ID: {$runUser->sib_user_id}\n"
+                . "Care ID: {$runUserCare->id}\n\n"
+                . $trace
+            );
         }
 
         if (Str::contains(

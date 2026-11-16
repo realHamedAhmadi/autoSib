@@ -79,5 +79,8 @@ final class SibUserService
         return SibUserInfo::fromApiResponse($userData);
     }
 
-
+    public static function getServiceRecipientTokenKey($adminUserId):string
+    {
+        return "service_recipient_token_$adminUserId";
+    }
 }

@@ -3,8 +3,12 @@
 namespace App\Services\Sib;
 
 use App\Exceptions\SibApiException;
+use App\Models\User;
+use App\Services\Sib\User\SibUserService;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -23,20 +27,25 @@ final class SibHttpClient
         ];
 
         $accessToken=$this->getAccessToken($adminUserIdentifier);
+        $cookies=[];
+        $cookies['X-Access-Token'] =$accessToken;
         if ($adminUserIdentifier !== null) {
             $headers['Referer'] = "https://{$host}/sibnew/checkTkn?uri=%22%2F%22&tkn={$accessToken}";
             // Explicitly pass Cookie in headers to guarantee its inclusion.
-            $headers['Cookie'] = "X-Access-Token={$accessToken}";
+            $cacheKey=SibUserService::getServiceRecipientTokenKey($this->getAdminUserId($adminUserIdentifier));
+            if (Cache::has($cacheKey)){
+                $cookies['X-Service-Recipient-Token']=Cache::get($cacheKey);
+            }
         } else {
             $headers['Referer'] = "https://{$host}/";
-        }
 
+        }
         $request = Http::baseUrl($baseUrl)
             ->acceptJson()
             ->asJson()
             ->withHeaders($headers)
             ->withCookies(
-                ['X-Access-Token' => $accessToken],
+                $cookies,
                 $host,
             )
             ->connectTimeout(config('sib.connect_timeout'))
@@ -109,5 +118,13 @@ final class SibHttpClient
             return $userIdentifier;
         }
         return getCurrentUserToken($userIdentifier);
+    }
+
+    private function getAdminUserId($userIdentifier)
+    {
+        if (strlen($userIdentifier)<20){
+            return $userIdentifier;
+        }
+        return User::where('token',$userIdentifier)->first()?->id;
     }
 }
