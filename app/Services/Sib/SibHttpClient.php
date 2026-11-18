@@ -19,10 +19,12 @@ final class SibHttpClient
         $baseUrl = config('sib.base_url');
         $host = parse_url($baseUrl, PHP_URL_HOST);
 
+        $adminUserId=$this->getAdminUserId($adminUserIdentifier);
+
         $headers = [
             'Accept-Language' => 'fa-IR',
             'Origin' => $baseUrl,
-            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
+            'User-Agent' => $this->getUserAgent($adminUserId),
             'Connection' => 'keep-alive',
         ];
 
@@ -32,7 +34,7 @@ final class SibHttpClient
         if ($adminUserIdentifier !== null) {
             $headers['Referer'] = "https://{$host}/sibnew/checkTkn?uri=%22%2F%22&tkn={$accessToken}";
             // Explicitly pass Cookie in headers to guarantee its inclusion.
-            $cacheKey=SibUserService::getServiceRecipientTokenKey($this->getAdminUserId($adminUserIdentifier));
+            $cacheKey=SibUserService::getServiceRecipientTokenKey($adminUserId);
             if (Cache::has($cacheKey)){
                 $cookies['X-Service-Recipient-Token']=Cache::get($cacheKey);
             }
@@ -105,6 +107,11 @@ final class SibHttpClient
         return $data;
     }
 
+    public static function getUserAgentCacheKey(string $adminUserId):string
+    {
+        return "user_agent_$adminUserId";
+    }
+
     private function payload(Response $response): array
     {
         $payload = $response->json();
@@ -120,11 +127,26 @@ final class SibHttpClient
         return getCurrentUserToken($userIdentifier);
     }
 
-    private function getAdminUserId($userIdentifier)
+    private function getAdminUserId(string|null $userIdentifier=null)
     {
         if (strlen($userIdentifier)<20){
             return $userIdentifier;
         }
         return User::where('token',$userIdentifier)->first()?->id;
+    }
+
+    private function getUserAgent(string|null $adminUserId=null):string
+    {
+        if ($adminUserId){
+            return Cache::get(SibHttpClient::getUserAgentCacheKey($adminUserId));
+        }
+
+        $userAgent=Cache::get('latest_user_agent');
+
+        if (!$userAgent){
+            $userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0';
+        }
+
+        return $userAgent;
     }
 }
